@@ -32,9 +32,9 @@ function SignupPage() {
     toast.success("Account created.");
     // Auto-confirm is on, session may be present.
     if (data.session) {
-      navigate({ to: values.role === "author" ? "/author/dashboard" : "/buyer/dashboard" });
+      navigate({ to: values.role === "author" ? "/dashboard/author" : "/dashboard/buyer" });
     } else {
-      navigate({ to: values.role === "author" ? "/author/login" : "/buyer/login" });
+      navigate({ to: values.role === "author" ? "/login/author" : "/login/buyer" });
     }
   };
 
@@ -84,7 +84,7 @@ function SignupPage() {
         </button>
         <p className="text-center text-xs text-muted-foreground">
           Already have an account?{" "}
-          <Link to="/buyer/login" className="border-b border-ink hover:text-gold hover:border-gold">Sign in</Link>
+          <Link to="/login/buyer" className="border-b border-ink hover:text-gold hover:border-gold">Sign in</Link>
         </p>
       </form>
     </AuthCard>
