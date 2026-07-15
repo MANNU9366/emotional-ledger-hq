@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkshopsRouteImport } from './routes/workshops'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SpeakingRouteImport } from './routes/speaking'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SampleChapterRouteImport } from './routes/sample-chapter'
@@ -28,6 +29,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const WorkshopsRoute = WorkshopsRouteImport.update({
   id: '/workshops',
   path: '/workshops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpeakingRoute = SpeakingRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/sample-chapter': typeof SampleChapterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
+  '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
 }
 export interface FileRoutesByTo {
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/sample-chapter': typeof SampleChapterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
+  '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
 }
 export interface FileRoutesById {
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/sample-chapter': typeof SampleChapterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
+  '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
 }
 export interface FileRouteTypes {
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/sample-chapter'
     | '/sitemap.xml'
     | '/speaking'
+    | '/terms'
     | '/workshops'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/sample-chapter'
     | '/sitemap.xml'
     | '/speaking'
+    | '/terms'
     | '/workshops'
   id:
     | '__root__'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/sample-chapter'
     | '/sitemap.xml'
     | '/speaking'
+    | '/terms'
     | '/workshops'
   fileRoutesById: FileRoutesById
 }
@@ -222,6 +234,7 @@ export interface RootRouteChildren {
   SampleChapterRoute: typeof SampleChapterRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SpeakingRoute: typeof SpeakingRoute
+  TermsRoute: typeof TermsRoute
   WorkshopsRoute: typeof WorkshopsRoute
 }
 
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/workshops'
       fullPath: '/workshops'
       preLoaderRoute: typeof WorkshopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/speaking': {
@@ -350,6 +370,7 @@ const rootRouteChildren: RootRouteChildren = {
   SampleChapterRoute: SampleChapterRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SpeakingRoute: SpeakingRoute,
+  TermsRoute: TermsRoute,
   WorkshopsRoute: WorkshopsRoute,
 }
 export const routeTree = rootRouteImport
