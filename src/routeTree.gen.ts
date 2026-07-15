@@ -29,6 +29,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginBuyerRouteImport } from './routes/login/buyer'
 import { Route as LoginAuthorRouteImport } from './routes/login/author'
 import { Route as LoginAdminRouteImport } from './routes/login/admin'
+import { Route as DashboardAdminRouteImport } from './routes/dashboard/admin'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
   id: '/workshops',
@@ -130,6 +131,11 @@ const LoginAdminRoute = LoginAdminRouteImport.update({
   path: '/login/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardAdminRoute = DashboardAdminRouteImport.update({
+  id: '/dashboard/admin',
+  path: '/dashboard/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
   '/login/admin': typeof LoginAdminRoute
   '/login/author': typeof LoginAuthorRoute
   '/login/buyer': typeof LoginBuyerRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
   '/login/admin': typeof LoginAdminRoute
   '/login/author': typeof LoginAuthorRoute
   '/login/buyer': typeof LoginBuyerRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
   '/login/admin': typeof LoginAdminRoute
   '/login/author': typeof LoginAuthorRoute
   '/login/buyer': typeof LoginBuyerRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/dashboard/admin'
     | '/login/admin'
     | '/login/author'
     | '/login/buyer'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/dashboard/admin'
     | '/login/admin'
     | '/login/author'
     | '/login/buyer'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/dashboard/admin'
     | '/login/admin'
     | '/login/author'
     | '/login/buyer'
@@ -285,6 +297,7 @@ export interface RootRouteChildren {
   SpeakingRoute: typeof SpeakingRoute
   TermsRoute: typeof TermsRoute
   WorkshopsRoute: typeof WorkshopsRoute
+  DashboardAdminRoute: typeof DashboardAdminRoute
   LoginAdminRoute: typeof LoginAdminRoute
   LoginAuthorRoute: typeof LoginAuthorRoute
   LoginBuyerRoute: typeof LoginBuyerRoute
@@ -432,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/dashboard/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -453,6 +473,7 @@ const rootRouteChildren: RootRouteChildren = {
   SpeakingRoute: SpeakingRoute,
   TermsRoute: TermsRoute,
   WorkshopsRoute: WorkshopsRoute,
+  DashboardAdminRoute: DashboardAdminRoute,
   LoginAdminRoute: LoginAdminRoute,
   LoginAuthorRoute: LoginAuthorRoute,
   LoginBuyerRoute: LoginBuyerRoute,
