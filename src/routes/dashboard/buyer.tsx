@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Star } from "lucide-react";
+import { Loader2, Plus, Trash2, Star, BookOpen, Heart, MessageCircle, Bookmark } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/DashboardShell";
 import { useAuth } from "@/lib/auth";
 import { inputCls, primaryBtn } from "@/components/site/AuthCard";
+import { Link } from "@tanstack/react-router";
+import bookCover from "@/assets/book-cover.jpg";
+import hero from "@/assets/hero.jpg";
 
 export const Route = createFileRoute("/dashboard/buyer")({
   head: () => ({ meta: [{ title: "My library — Emotional Ledger" }, { name: "robots", content: "noindex" }] }),
@@ -70,6 +73,34 @@ function BuyerDashboard() {
 
   return (
     <DashboardShell role="buyer" loginPath="/login/buyer" eyebrow="Reader" title="Your library.">
+      <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+        <div className="relative overflow-hidden border border-border/70 bg-ivory">
+          <img src={hero} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" />
+          <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-center md:p-8">
+            <img src={bookCover} alt="Emotional Ledger" className="h-40 w-32 flex-shrink-0 object-cover shadow-[0_20px_40px_-20px_rgba(0,0,0,0.5)]" />
+            <div>
+              <p className="eyebrow">Currently reading</p>
+              <h2 className="mt-2 font-display text-2xl leading-tight text-ink md:text-3xl">Emotional Ledger</h2>
+              <div className="mt-3 h-1.5 w-full max-w-xs bg-ink/10">
+                <div className="h-full bg-gold" style={{ width: "42%" }} />
+              </div>
+              <p className="mt-2 text-xs uppercase tracking-[0.16em] text-muted-foreground">Chapter IV · 42% complete</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link to="/sample-chapter" className="inline-flex items-center gap-2 border border-ink px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-ink hover:bg-ink hover:text-paper"><BookOpen className="size-3.5" /> Continue reading</Link>
+                <Link to="/buy" className="inline-flex items-center gap-2 border border-ink bg-ink px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-paper hover:bg-transparent hover:text-ink">Buy another edition</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Card><p className="eyebrow flex items-center gap-1.5"><Bookmark className="size-3 text-gold" /> Orders</p><p className="mt-2 font-display text-3xl text-ink">{orders.length}</p></Card>
+          <Card><p className="eyebrow flex items-center gap-1.5"><Star className="size-3 text-gold" /> Reviews</p><p className="mt-2 font-display text-3xl text-ink">{reviews.length}</p></Card>
+          <Card><p className="eyebrow flex items-center gap-1.5"><Heart className="size-3 text-gold" /> Highlights</p><p className="mt-2 font-display text-3xl text-ink">24</p></Card>
+          <Card><p className="eyebrow flex items-center gap-1.5"><MessageCircle className="size-3 text-gold" /> Notes</p><p className="mt-2 font-display text-3xl text-ink">7</p></Card>
+        </div>
+      </div>
+
+      <div className="mt-8">
       <Tabs
         active={tab}
         onChange={setTab}
@@ -78,6 +109,7 @@ function BuyerDashboard() {
           { key: "reviews", label: "My Reviews", count: reviews.length },
         ]}
       />
+      </div>
       <div className="mt-8 grid gap-4">
         {tab === "orders" && (
           <>

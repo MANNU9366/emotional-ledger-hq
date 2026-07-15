@@ -21,6 +21,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as CorporateRouteImport } from './routes/corporate'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as BuyRouteImport } from './routes/buy'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthorRouteImport } from './routes/author'
@@ -93,6 +94,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuyRoute = BuyRouteImport.update({
   id: '/buy',
   path: '/buy',
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/author': typeof AuthorRoute
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/author': typeof AuthorRoute
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/author': typeof AuthorRoute
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/events': typeof EventsRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/author'
     | '/book'
     | '/buy'
+    | '/checkout'
     | '/contact'
     | '/corporate'
     | '/events'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/author'
     | '/book'
     | '/buy'
+    | '/checkout'
     | '/contact'
     | '/corporate'
     | '/events'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/author'
     | '/book'
     | '/buy'
+    | '/checkout'
     | '/contact'
     | '/corporate'
     | '/events'
@@ -309,6 +321,7 @@ export interface RootRouteChildren {
   AuthorRoute: typeof AuthorRoute
   BookRoute: typeof BookRoute
   BuyRoute: typeof BuyRoute
+  CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   CorporateRoute: typeof CorporateRoute
   EventsRoute: typeof EventsRoute
@@ -415,6 +428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/buy': {
       id: '/buy'
       path: '/buy'
@@ -501,6 +521,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthorRoute: AuthorRoute,
   BookRoute: BookRoute,
   BuyRoute: BuyRoute,
+  CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   CorporateRoute: CorporateRoute,
   EventsRoute: EventsRoute,
