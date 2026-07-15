@@ -13,6 +13,7 @@ import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as SpeakingRouteImport } from './routes/speaking'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SampleChapterRouteImport } from './routes/sample-chapter'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MediaRouteImport } from './routes/media'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as EventsRouteImport } from './routes/events'
@@ -42,6 +43,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SampleChapterRoute = SampleChapterRouteImport.update({
   id: '/sample-chapter',
   path: '/sample-chapter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MediaRoute = MediaRouteImport.update({
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
+  '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
+  '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
+  '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/faq'
     | '/media'
+    | '/privacy'
     | '/sample-chapter'
     | '/sitemap.xml'
     | '/speaking'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/faq'
     | '/media'
+    | '/privacy'
     | '/sample-chapter'
     | '/sitemap.xml'
     | '/speaking'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/events'
     | '/faq'
     | '/media'
+    | '/privacy'
     | '/sample-chapter'
     | '/sitemap.xml'
     | '/speaking'
@@ -206,6 +218,7 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   FaqRoute: typeof FaqRoute
   MediaRoute: typeof MediaRoute
+  PrivacyRoute: typeof PrivacyRoute
   SampleChapterRoute: typeof SampleChapterRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SpeakingRoute: typeof SpeakingRoute
@@ -240,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/sample-chapter'
       fullPath: '/sample-chapter'
       preLoaderRoute: typeof SampleChapterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/media': {
@@ -326,6 +346,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   FaqRoute: FaqRoute,
   MediaRoute: MediaRoute,
+  PrivacyRoute: PrivacyRoute,
   SampleChapterRoute: SampleChapterRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SpeakingRoute: SpeakingRoute,
