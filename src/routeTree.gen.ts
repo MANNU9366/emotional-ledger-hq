@@ -29,6 +29,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginBuyerRouteImport } from './routes/login/buyer'
 import { Route as LoginAuthorRouteImport } from './routes/login/author'
 import { Route as LoginAdminRouteImport } from './routes/login/admin'
+import { Route as DashboardAuthorRouteImport } from './routes/dashboard/author'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard/admin'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
@@ -131,6 +132,11 @@ const LoginAdminRoute = LoginAdminRouteImport.update({
   path: '/login/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardAuthorRoute = DashboardAuthorRouteImport.update({
+  id: '/dashboard/author',
+  path: '/dashboard/author',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardAdminRoute = DashboardAdminRouteImport.update({
   id: '/dashboard/admin',
   path: '/dashboard/admin',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/author': typeof DashboardAuthorRoute
   '/login/admin': typeof LoginAdminRoute
   '/login/author': typeof LoginAuthorRoute
   '/login/buyer': typeof LoginBuyerRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/author': typeof DashboardAuthorRoute
   '/login/admin': typeof LoginAdminRoute
   '/login/author': typeof LoginAuthorRoute
   '/login/buyer': typeof LoginBuyerRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/author': typeof DashboardAuthorRoute
   '/login/admin': typeof LoginAdminRoute
   '/login/author': typeof LoginAuthorRoute
   '/login/buyer': typeof LoginBuyerRoute
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/dashboard/admin'
+    | '/dashboard/author'
     | '/login/admin'
     | '/login/author'
     | '/login/buyer'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/dashboard/admin'
+    | '/dashboard/author'
     | '/login/admin'
     | '/login/author'
     | '/login/buyer'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/dashboard/admin'
+    | '/dashboard/author'
     | '/login/admin'
     | '/login/author'
     | '/login/buyer'
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   WorkshopsRoute: typeof WorkshopsRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardAuthorRoute: typeof DashboardAuthorRoute
   LoginAdminRoute: typeof LoginAdminRoute
   LoginAuthorRoute: typeof LoginAuthorRoute
   LoginBuyerRoute: typeof LoginBuyerRoute
@@ -445,6 +458,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginAdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/author': {
+      id: '/dashboard/author'
+      path: '/dashboard/author'
+      fullPath: '/dashboard/author'
+      preLoaderRoute: typeof DashboardAuthorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/admin': {
       id: '/dashboard/admin'
       path: '/dashboard/admin'
@@ -474,6 +494,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   WorkshopsRoute: WorkshopsRoute,
   DashboardAdminRoute: DashboardAdminRoute,
+  DashboardAuthorRoute: DashboardAuthorRoute,
   LoginAdminRoute: LoginAdminRoute,
   LoginAuthorRoute: LoginAuthorRoute,
   LoginBuyerRoute: LoginBuyerRoute,
