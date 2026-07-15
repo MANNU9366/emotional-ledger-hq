@@ -13,6 +13,7 @@ import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SpeakingRouteImport } from './routes/speaking'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SampleChapterRouteImport } from './routes/sample-chapter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MediaRouteImport } from './routes/media'
@@ -44,6 +45,11 @@ const SpeakingRoute = SpeakingRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SampleChapterRoute = SampleChapterRouteImport.update({
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/media'
     | '/privacy'
     | '/sample-chapter'
+    | '/signup'
     | '/sitemap.xml'
     | '/speaking'
     | '/terms'
@@ -195,6 +205,7 @@ export interface FileRouteTypes {
     | '/media'
     | '/privacy'
     | '/sample-chapter'
+    | '/signup'
     | '/sitemap.xml'
     | '/speaking'
     | '/terms'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
     | '/media'
     | '/privacy'
     | '/sample-chapter'
+    | '/signup'
     | '/sitemap.xml'
     | '/speaking'
     | '/terms'
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   MediaRoute: typeof MediaRoute
   PrivacyRoute: typeof PrivacyRoute
   SampleChapterRoute: typeof SampleChapterRoute
+  SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SpeakingRoute: typeof SpeakingRoute
   TermsRoute: typeof TermsRoute
@@ -266,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sample-chapter': {
@@ -368,6 +388,7 @@ const rootRouteChildren: RootRouteChildren = {
   MediaRoute: MediaRoute,
   PrivacyRoute: PrivacyRoute,
   SampleChapterRoute: SampleChapterRoute,
+  SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SpeakingRoute: SpeakingRoute,
   TermsRoute: TermsRoute,
