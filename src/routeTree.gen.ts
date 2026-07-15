@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as SpeakingRouteImport } from './routes/speaking'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SampleChapterRouteImport } from './routes/sample-chapter'
 import { Route as MediaRouteImport } from './routes/media'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -31,6 +32,11 @@ const WorkshopsRoute = WorkshopsRouteImport.update({
 const SpeakingRoute = SpeakingRouteImport.update({
   id: '/speaking',
   path: '/speaking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SampleChapterRoute = SampleChapterRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/workshops': typeof WorkshopsRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/workshops': typeof WorkshopsRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/workshops': typeof WorkshopsRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/media'
     | '/sample-chapter'
+    | '/sitemap.xml'
     | '/speaking'
     | '/workshops'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/media'
     | '/sample-chapter'
+    | '/sitemap.xml'
     | '/speaking'
     | '/workshops'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/media'
     | '/sample-chapter'
+    | '/sitemap.xml'
     | '/speaking'
     | '/workshops'
   fileRoutesById: FileRoutesById
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   MediaRoute: typeof MediaRoute
   SampleChapterRoute: typeof SampleChapterRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SpeakingRoute: typeof SpeakingRoute
   WorkshopsRoute: typeof WorkshopsRoute
 }
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/speaking'
       fullPath: '/speaking'
       preLoaderRoute: typeof SpeakingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sample-chapter': {
@@ -307,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   MediaRoute: MediaRoute,
   SampleChapterRoute: SampleChapterRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SpeakingRoute: SpeakingRoute,
   WorkshopsRoute: WorkshopsRoute,
 }
