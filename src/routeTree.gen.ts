@@ -13,6 +13,7 @@ import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SpeakingRouteImport } from './routes/speaking'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SampleChapterRouteImport } from './routes/sample-chapter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MediaRouteImport } from './routes/media'
@@ -25,6 +26,12 @@ import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthorRouteImport } from './routes/author'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginBuyerRouteImport } from './routes/login/buyer'
+import { Route as LoginAuthorRouteImport } from './routes/login/author'
+import { Route as LoginAdminRouteImport } from './routes/login/admin'
+import { Route as DashboardBuyerRouteImport } from './routes/dashboard/buyer'
+import { Route as DashboardAuthorRouteImport } from './routes/dashboard/author'
+import { Route as DashboardAdminRouteImport } from './routes/dashboard/admin'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
   id: '/workshops',
@@ -44,6 +51,11 @@ const SpeakingRoute = SpeakingRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SampleChapterRoute = SampleChapterRouteImport.update({
@@ -106,6 +118,36 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginBuyerRoute = LoginBuyerRouteImport.update({
+  id: '/login/buyer',
+  path: '/login/buyer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginAuthorRoute = LoginAuthorRouteImport.update({
+  id: '/login/author',
+  path: '/login/author',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginAdminRoute = LoginAdminRouteImport.update({
+  id: '/login/admin',
+  path: '/login/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardBuyerRoute = DashboardBuyerRouteImport.update({
+  id: '/dashboard/buyer',
+  path: '/dashboard/buyer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardAuthorRoute = DashboardAuthorRouteImport.update({
+  id: '/dashboard/author',
+  path: '/dashboard/author',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardAdminRoute = DashboardAdminRouteImport.update({
+  id: '/dashboard/admin',
+  path: '/dashboard/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -120,10 +162,17 @@ export interface FileRoutesByFullPath {
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/author': typeof DashboardAuthorRoute
+  '/dashboard/buyer': typeof DashboardBuyerRoute
+  '/login/admin': typeof LoginAdminRoute
+  '/login/author': typeof LoginAuthorRoute
+  '/login/buyer': typeof LoginBuyerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -138,10 +187,17 @@ export interface FileRoutesByTo {
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/author': typeof DashboardAuthorRoute
+  '/dashboard/buyer': typeof DashboardBuyerRoute
+  '/login/admin': typeof LoginAdminRoute
+  '/login/author': typeof LoginAuthorRoute
+  '/login/buyer': typeof LoginBuyerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -157,10 +213,17 @@ export interface FileRoutesById {
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
   '/sample-chapter': typeof SampleChapterRoute
+  '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/author': typeof DashboardAuthorRoute
+  '/dashboard/buyer': typeof DashboardBuyerRoute
+  '/login/admin': typeof LoginAdminRoute
+  '/login/author': typeof LoginAuthorRoute
+  '/login/buyer': typeof LoginBuyerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -177,10 +240,17 @@ export interface FileRouteTypes {
     | '/media'
     | '/privacy'
     | '/sample-chapter'
+    | '/signup'
     | '/sitemap.xml'
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/dashboard/admin'
+    | '/dashboard/author'
+    | '/dashboard/buyer'
+    | '/login/admin'
+    | '/login/author'
+    | '/login/buyer'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -195,10 +265,17 @@ export interface FileRouteTypes {
     | '/media'
     | '/privacy'
     | '/sample-chapter'
+    | '/signup'
     | '/sitemap.xml'
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/dashboard/admin'
+    | '/dashboard/author'
+    | '/dashboard/buyer'
+    | '/login/admin'
+    | '/login/author'
+    | '/login/buyer'
   id:
     | '__root__'
     | '/'
@@ -213,10 +290,17 @@ export interface FileRouteTypes {
     | '/media'
     | '/privacy'
     | '/sample-chapter'
+    | '/signup'
     | '/sitemap.xml'
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/dashboard/admin'
+    | '/dashboard/author'
+    | '/dashboard/buyer'
+    | '/login/admin'
+    | '/login/author'
+    | '/login/buyer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -232,10 +316,17 @@ export interface RootRouteChildren {
   MediaRoute: typeof MediaRoute
   PrivacyRoute: typeof PrivacyRoute
   SampleChapterRoute: typeof SampleChapterRoute
+  SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SpeakingRoute: typeof SpeakingRoute
   TermsRoute: typeof TermsRoute
   WorkshopsRoute: typeof WorkshopsRoute
+  DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardAuthorRoute: typeof DashboardAuthorRoute
+  DashboardBuyerRoute: typeof DashboardBuyerRoute
+  LoginAdminRoute: typeof LoginAdminRoute
+  LoginAuthorRoute: typeof LoginAuthorRoute
+  LoginBuyerRoute: typeof LoginBuyerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -266,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sample-chapter': {
@@ -352,6 +450,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login/buyer': {
+      id: '/login/buyer'
+      path: '/login/buyer'
+      fullPath: '/login/buyer'
+      preLoaderRoute: typeof LoginBuyerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/author': {
+      id: '/login/author'
+      path: '/login/author'
+      fullPath: '/login/author'
+      preLoaderRoute: typeof LoginAuthorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/admin': {
+      id: '/login/admin'
+      path: '/login/admin'
+      fullPath: '/login/admin'
+      preLoaderRoute: typeof LoginAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/buyer': {
+      id: '/dashboard/buyer'
+      path: '/dashboard/buyer'
+      fullPath: '/dashboard/buyer'
+      preLoaderRoute: typeof DashboardBuyerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/author': {
+      id: '/dashboard/author'
+      path: '/dashboard/author'
+      fullPath: '/dashboard/author'
+      preLoaderRoute: typeof DashboardAuthorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/dashboard/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -368,21 +508,18 @@ const rootRouteChildren: RootRouteChildren = {
   MediaRoute: MediaRoute,
   PrivacyRoute: PrivacyRoute,
   SampleChapterRoute: SampleChapterRoute,
+  SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SpeakingRoute: SpeakingRoute,
   TermsRoute: TermsRoute,
   WorkshopsRoute: WorkshopsRoute,
+  DashboardAdminRoute: DashboardAdminRoute,
+  DashboardAuthorRoute: DashboardAuthorRoute,
+  DashboardBuyerRoute: DashboardBuyerRoute,
+  LoginAdminRoute: LoginAdminRoute,
+  LoginAuthorRoute: LoginAuthorRoute,
+  LoginBuyerRoute: LoginBuyerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

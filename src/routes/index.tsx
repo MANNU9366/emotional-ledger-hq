@@ -7,6 +7,7 @@ import author from "@/assets/author.jpg";
 import { Section, SectionEyebrow } from "@/components/site/Section";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { CHAPTERS, ENDORSEMENTS, QUOTES, THEMES } from "@/lib/site-content";
+import { ReviewsSection } from "@/components/site/ReviewsSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -51,6 +52,7 @@ function Index() {
       <QuoteWall />
       <AuthorTeaser />
       <Endorsements />
+      <ReviewsSection />
       <WorkWith />
       <NewsletterBand />
     </div>

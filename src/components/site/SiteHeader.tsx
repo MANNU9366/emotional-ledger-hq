@@ -1,12 +1,22 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { PRIMARY_NAV, SITE } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
+import { useAuth, signOut } from "@/lib/auth";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { session, roles } = useAuth();
+  const nav = useNavigate();
+
+  const dashboardPath = roles.includes("admin")
+    ? "/dashboard/admin"
+    : roles.includes("author")
+      ? "/dashboard/author"
+      : "/dashboard/buyer";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -56,12 +66,38 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden md:block">
+          {session ? (
+            <div className="relative inline-block">
+              <button
+                onClick={() => setMenuOpen((v) => !v)}
+                className="inline-flex items-center gap-2 border border-ink px-3 py-2 text-[0.72rem] uppercase tracking-[0.18em] text-ink hover:bg-ink hover:text-paper"
+              >
+                <User className="size-3.5" /> Account
+              </button>
+              {menuOpen ? (
+                <div className="absolute right-0 mt-2 w-52 border border-border bg-paper shadow-lg" onMouseLeave={() => setMenuOpen(false)}>
+                  <Link to={dashboardPath} onClick={() => setMenuOpen(false)} className="block px-4 py-3 text-sm text-ink hover:bg-ivory">Dashboard</Link>
+                  <Link to="/buy" onClick={() => setMenuOpen(false)} className="block px-4 py-3 text-sm text-ink hover:bg-ivory">Buy the Book</Link>
+                  <button
+                    onClick={async () => { setMenuOpen(false); await signOut(); nav({ to: "/" }); }}
+                    className="block w-full border-t border-border px-4 py-3 text-left text-sm text-muted-foreground hover:bg-ivory hover:text-ink"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link to="/login/buyer" className="text-[0.75rem] uppercase tracking-[0.18em] text-muted-foreground hover:text-ink">Sign in</Link>
           <Link
             to="/buy"
             className="inline-flex items-center justify-center border border-ink bg-ink px-4 py-2 text-[0.75rem] uppercase tracking-[0.18em] text-paper transition-colors hover:bg-transparent hover:text-ink"
           >
             Buy the Book
           </Link>
+            </div>
+          )}
         </div>
 
         <button
@@ -95,6 +131,17 @@ export function SiteHeader() {
             >
               Buy the Book
             </Link>
+            {session ? (
+              <>
+                <Link to={dashboardPath} onClick={() => setOpen(false)} className="mt-2 border border-ink px-4 py-3 text-center text-[0.75rem] uppercase tracking-[0.18em] text-ink">Dashboard</Link>
+                <button
+                  onClick={async () => { setOpen(false); await signOut(); nav({ to: "/" }); }}
+                  className="mt-2 px-4 py-3 text-center text-[0.75rem] uppercase tracking-[0.18em] text-muted-foreground"
+                >Sign out</button>
+              </>
+            ) : (
+              <Link to="/login/buyer" onClick={() => setOpen(false)} className="mt-2 px-4 py-3 text-center text-[0.75rem] uppercase tracking-[0.18em] text-ink">Sign in</Link>
+            )}
           </nav>
         </div>
       ) : null}
