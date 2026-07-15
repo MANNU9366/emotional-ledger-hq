@@ -18,8 +18,9 @@ const EDITIONS = {
 type EditionKey = keyof typeof EDITIONS;
 
 export const Route = createFileRoute("/checkout")({
-  validateSearch: (s: Record<string, unknown>) => {
-    const edition = (s.edition as string) in EDITIONS ? (s.edition as EditionKey) : "hardcover";
+  validateSearch: (s: Record<string, unknown>): { edition: EditionKey } => {
+    const raw = typeof s.edition === "string" ? s.edition : "";
+    const edition: EditionKey = raw === "digital" || raw === "audio" ? raw : "hardcover";
     return { edition };
   },
   head: () => ({
