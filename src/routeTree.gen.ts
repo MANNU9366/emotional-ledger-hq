@@ -26,6 +26,7 @@ import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthorRouteImport } from './routes/author'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginAuthorRouteImport } from './routes/login/author'
 import { Route as LoginAdminRouteImport } from './routes/login/admin'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
@@ -113,6 +114,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginAuthorRoute = LoginAuthorRouteImport.update({
+  id: '/login/author',
+  path: '/login/author',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginAdminRoute = LoginAdminRouteImport.update({
   id: '/login/admin',
   path: '/login/admin',
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/login/admin': typeof LoginAdminRoute
+  '/login/author': typeof LoginAuthorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -158,6 +165,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/login/admin': typeof LoginAdminRoute
+  '/login/author': typeof LoginAuthorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/login/admin': typeof LoginAdminRoute
+  '/login/author': typeof LoginAuthorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/login/admin'
+    | '/login/author'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/login/admin'
+    | '/login/author'
   id:
     | '__root__'
     | '/'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/login/admin'
+    | '/login/author'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -262,6 +274,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   WorkshopsRoute: typeof WorkshopsRoute
   LoginAdminRoute: typeof LoginAdminRoute
+  LoginAuthorRoute: typeof LoginAuthorRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -385,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login/author': {
+      id: '/login/author'
+      path: '/login/author'
+      fullPath: '/login/author'
+      preLoaderRoute: typeof LoginAuthorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login/admin': {
       id: '/login/admin'
       path: '/login/admin'
@@ -414,6 +434,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   WorkshopsRoute: WorkshopsRoute,
   LoginAdminRoute: LoginAdminRoute,
+  LoginAuthorRoute: LoginAuthorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
