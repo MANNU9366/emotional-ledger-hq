@@ -14,6 +14,7 @@ import { Route as SpeakingRouteImport } from './routes/speaking'
 import { Route as SampleChapterRouteImport } from './routes/sample-chapter'
 import { Route as MediaRouteImport } from './routes/media'
 import { Route as FaqRouteImport } from './routes/faq'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as CorporateRouteImport } from './routes/corporate'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BuyRouteImport } from './routes/buy'
@@ -45,6 +46,11 @@ const MediaRoute = MediaRouteImport.update({
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CorporateRoute = CorporateRouteImport.update({
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
+  '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/sample-chapter': typeof SampleChapterRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
+  '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/sample-chapter': typeof SampleChapterRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
+  '/events': typeof EventsRoute
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/sample-chapter': typeof SampleChapterRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/buy'
     | '/contact'
     | '/corporate'
+    | '/events'
     | '/faq'
     | '/media'
     | '/sample-chapter'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/buy'
     | '/contact'
     | '/corporate'
+    | '/events'
     | '/faq'
     | '/media'
     | '/sample-chapter'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/buy'
     | '/contact'
     | '/corporate'
+    | '/events'
     | '/faq'
     | '/media'
     | '/sample-chapter'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   BuyRoute: typeof BuyRoute
   ContactRoute: typeof ContactRoute
   CorporateRoute: typeof CorporateRoute
+  EventsRoute: typeof EventsRoute
   FaqRoute: typeof FaqRoute
   MediaRoute: typeof MediaRoute
   SampleChapterRoute: typeof SampleChapterRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/faq'
       fullPath: '/faq'
       preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/corporate': {
@@ -283,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   BuyRoute: BuyRoute,
   ContactRoute: ContactRoute,
   CorporateRoute: CorporateRoute,
+  EventsRoute: EventsRoute,
   FaqRoute: FaqRoute,
   MediaRoute: MediaRoute,
   SampleChapterRoute: SampleChapterRoute,
