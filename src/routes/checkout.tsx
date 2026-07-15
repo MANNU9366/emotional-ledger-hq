@@ -33,7 +33,7 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function CheckoutPage() {
-  const { edition } = Route.useSearch();
+  const { edition } = Route.useSearch() as { edition: EditionKey };
   const item = EDITIONS[edition];
   const nav = useNavigate();
   const { user } = useAuth();
