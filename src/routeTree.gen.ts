@@ -26,9 +26,6 @@ import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthorRouteImport } from './routes/author'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BuyerLoginRouteImport } from './routes/buyer.login'
-import { Route as AuthorLoginRouteImport } from './routes/author.login'
-import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
   id: '/workshops',
@@ -115,26 +112,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BuyerLoginRoute = BuyerLoginRouteImport.update({
-  id: '/buyer/login',
-  path: '/buyer/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthorLoginRoute = AuthorLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AuthorRoute,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/articles': typeof ArticlesRoute
-  '/author': typeof AuthorRouteWithChildren
+  '/author': typeof AuthorRoute
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
@@ -149,14 +131,11 @@ export interface FileRoutesByFullPath {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/author/login': typeof AuthorLoginRoute
-  '/buyer/login': typeof BuyerLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/articles': typeof ArticlesRoute
-  '/author': typeof AuthorRouteWithChildren
+  '/author': typeof AuthorRoute
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
@@ -171,15 +150,12 @@ export interface FileRoutesByTo {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/author/login': typeof AuthorLoginRoute
-  '/buyer/login': typeof BuyerLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/articles': typeof ArticlesRoute
-  '/author': typeof AuthorRouteWithChildren
+  '/author': typeof AuthorRoute
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
@@ -194,9 +170,6 @@ export interface FileRoutesById {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/author/login': typeof AuthorLoginRoute
-  '/buyer/login': typeof BuyerLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -218,9 +191,6 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
-    | '/admin/login'
-    | '/author/login'
-    | '/buyer/login'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -240,9 +210,6 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
-    | '/admin/login'
-    | '/author/login'
-    | '/buyer/login'
   id:
     | '__root__'
     | '/'
@@ -262,15 +229,12 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
-    | '/admin/login'
-    | '/author/login'
-    | '/buyer/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArticlesRoute: typeof ArticlesRoute
-  AuthorRoute: typeof AuthorRouteWithChildren
+  AuthorRoute: typeof AuthorRoute
   BookRoute: typeof BookRoute
   BuyRoute: typeof BuyRoute
   ContactRoute: typeof ContactRoute
@@ -285,8 +249,6 @@ export interface RootRouteChildren {
   SpeakingRoute: typeof SpeakingRoute
   TermsRoute: typeof TermsRoute
   WorkshopsRoute: typeof WorkshopsRoute
-  AdminLoginRoute: typeof AdminLoginRoute
-  BuyerLoginRoute: typeof BuyerLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -410,45 +372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/buyer/login': {
-      id: '/buyer/login'
-      path: '/buyer/login'
-      fullPath: '/buyer/login'
-      preLoaderRoute: typeof BuyerLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/author/login': {
-      id: '/author/login'
-      path: '/login'
-      fullPath: '/author/login'
-      preLoaderRoute: typeof AuthorLoginRouteImport
-      parentRoute: typeof AuthorRoute
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
-
-interface AuthorRouteChildren {
-  AuthorLoginRoute: typeof AuthorLoginRoute
-}
-
-const AuthorRouteChildren: AuthorRouteChildren = {
-  AuthorLoginRoute: AuthorLoginRoute,
-}
-
-const AuthorRouteWithChildren =
-  AuthorRoute._addFileChildren(AuthorRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArticlesRoute: ArticlesRoute,
-  AuthorRoute: AuthorRouteWithChildren,
+  AuthorRoute: AuthorRoute,
   BookRoute: BookRoute,
   BuyRoute: BuyRoute,
   ContactRoute: ContactRoute,
@@ -463,8 +393,6 @@ const rootRouteChildren: RootRouteChildren = {
   SpeakingRoute: SpeakingRoute,
   TermsRoute: TermsRoute,
   WorkshopsRoute: WorkshopsRoute,
-  AdminLoginRoute: AdminLoginRoute,
-  BuyerLoginRoute: BuyerLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
