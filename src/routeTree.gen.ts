@@ -26,6 +26,7 @@ import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthorRouteImport } from './routes/author'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthorLoginRouteImport } from './routes/author.login'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
@@ -113,6 +114,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthorLoginRoute = AuthorLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthorRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
@@ -122,7 +128,7 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/articles': typeof ArticlesRoute
-  '/author': typeof AuthorRoute
+  '/author': typeof AuthorRouteWithChildren
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
@@ -138,11 +144,12 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/author/login': typeof AuthorLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/articles': typeof ArticlesRoute
-  '/author': typeof AuthorRoute
+  '/author': typeof AuthorRouteWithChildren
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
@@ -158,12 +165,13 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/author/login': typeof AuthorLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/articles': typeof ArticlesRoute
-  '/author': typeof AuthorRoute
+  '/author': typeof AuthorRouteWithChildren
   '/book': typeof BookRoute
   '/buy': typeof BuyRoute
   '/contact': typeof ContactRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/author/login': typeof AuthorLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/admin/login'
+    | '/author/login'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/admin/login'
+    | '/author/login'
   id:
     | '__root__'
     | '/'
@@ -241,12 +252,13 @@ export interface FileRouteTypes {
     | '/terms'
     | '/workshops'
     | '/admin/login'
+    | '/author/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArticlesRoute: typeof ArticlesRoute
-  AuthorRoute: typeof AuthorRoute
+  AuthorRoute: typeof AuthorRouteWithChildren
   BookRoute: typeof BookRoute
   BuyRoute: typeof BuyRoute
   ContactRoute: typeof ContactRoute
@@ -385,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/author/login': {
+      id: '/author/login'
+      path: '/login'
+      fullPath: '/author/login'
+      preLoaderRoute: typeof AuthorLoginRouteImport
+      parentRoute: typeof AuthorRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -395,10 +414,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthorRouteChildren {
+  AuthorLoginRoute: typeof AuthorLoginRoute
+}
+
+const AuthorRouteChildren: AuthorRouteChildren = {
+  AuthorLoginRoute: AuthorLoginRoute,
+}
+
+const AuthorRouteWithChildren =
+  AuthorRoute._addFileChildren(AuthorRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArticlesRoute: ArticlesRoute,
-  AuthorRoute: AuthorRoute,
+  AuthorRoute: AuthorRouteWithChildren,
   BookRoute: BookRoute,
   BuyRoute: BuyRoute,
   ContactRoute: ContactRoute,
