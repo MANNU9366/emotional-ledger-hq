@@ -26,6 +26,7 @@ import { Route as BookRouteImport } from './routes/book'
 import { Route as AuthorRouteImport } from './routes/author'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginAdminRouteImport } from './routes/login/admin'
 
 const WorkshopsRoute = WorkshopsRouteImport.update({
   id: '/workshops',
@@ -112,6 +113,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginAdminRoute = LoginAdminRouteImport.update({
+  id: '/login/admin',
+  path: '/login/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/login/admin': typeof LoginAdminRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/login/admin': typeof LoginAdminRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/speaking': typeof SpeakingRoute
   '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
+  '/login/admin': typeof LoginAdminRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/login/admin'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/login/admin'
   id:
     | '__root__'
     | '/'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/speaking'
     | '/terms'
     | '/workshops'
+    | '/login/admin'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -249,6 +261,7 @@ export interface RootRouteChildren {
   SpeakingRoute: typeof SpeakingRoute
   TermsRoute: typeof TermsRoute
   WorkshopsRoute: typeof WorkshopsRoute
+  LoginAdminRoute: typeof LoginAdminRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login/admin': {
+      id: '/login/admin'
+      path: '/login/admin'
+      fullPath: '/login/admin'
+      preLoaderRoute: typeof LoginAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -393,6 +413,7 @@ const rootRouteChildren: RootRouteChildren = {
   SpeakingRoute: SpeakingRoute,
   TermsRoute: TermsRoute,
   WorkshopsRoute: WorkshopsRoute,
+  LoginAdminRoute: LoginAdminRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
