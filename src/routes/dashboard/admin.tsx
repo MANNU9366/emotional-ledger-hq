@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Check, X, Star, Loader2 } from "lucide-react";
+import { Check, X, Star, Loader2, Upload, FileText, Trash2, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
 import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/DashboardShell";
 
 export const Route = createFileRoute("/dashboard/admin")({
@@ -14,6 +15,7 @@ type Testimonial = { id: string; author_name: string; role_title: string | null;
 type Subscriber = { id: string; email: string; source: string | null; created_at: string };
 type Enquiry = { id: string; kind: string; name: string | null; email: string; organization: string | null; subject: string | null; message: string | null; created_at: string };
 type Order = { id: string; retailer: string; order_number: string | null; quantity: number; status: string; purchase_date: string | null; created_at: string; user_id: string };
+type BookAsset = { id: string; title: string; description: string | null; kind: string; storage_path: string; file_name: string; file_size: number | null; mime_type: string | null; visibility: string; created_at: string };
 
 function AdminDashboard() {
   const [tab, setTab] = useState("testimonials");
@@ -23,19 +25,23 @@ function AdminDashboard() {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [kindFilter, setKindFilter] = useState<string>("all");
+  const [assets, setAssets] = useState<BookAsset[]>([]);
+  const { user } = useAuth();
 
   const load = async () => {
     setLoading(true);
-    const [t, s, e, o] = await Promise.all([
+    const [t, s, e, o, a] = await Promise.all([
       supabase.from("testimonials").select("*").order("created_at", { ascending: false }),
       supabase.from("subscribers").select("*").order("created_at", { ascending: false }),
       supabase.from("enquiries").select("*").order("created_at", { ascending: false }),
       supabase.from("orders").select("*").order("created_at", { ascending: false }),
+      supabase.from("book_assets").select("*").order("created_at", { ascending: false }),
     ]);
     setTestimonials((t.data as Testimonial[]) ?? []);
     setSubscribers((s.data as Subscriber[]) ?? []);
     setEnquiries((e.data as Enquiry[]) ?? []);
     setOrders((o.data as Order[]) ?? []);
+    setAssets((a.data as BookAsset[]) ?? []);
     setLoading(false);
   };
 
@@ -71,6 +77,7 @@ function AdminDashboard() {
           { key: "enquiries", label: "Enquiries", count: enquiries.length },
           { key: "subscribers", label: "Subscribers", count: subscribers.length },
           { key: "orders", label: "Orders", count: orders.length },
+          { key: "assets", label: "Files", count: assets.length },
         ]}
       />
       {loading ? (
@@ -187,8 +194,148 @@ function AdminDashboard() {
               </table>
             </Card>
           )}
+          {tab === "assets" && (
+            <AssetsPanel assets={assets} userId={user?.id ?? null} onChanged={load} />
+          )}
         </div>
       )}
     </DashboardShell>
+  );
+}
+
+function AssetsPanel({ assets, userId, onChanged }: { assets: BookAsset[]; userId: string | null; onChanged: () => void }) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [kind, setKind] = useState("chapter");
+  const [visibility, setVisibility] = useState("public");
+  const [file, setFile] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const upload = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!file) return toast.error("Choose a file to upload.");
+    if (!title.trim()) return toast.error("Give the file a title.");
+    setBusy(true);
+    try {
+      const safe = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
+      const path = `${kind}/${Date.now()}-${safe}`;
+      const up = await supabase.storage.from("book-assets").upload(path, file, {
+        contentType: file.type || "application/octet-stream",
+        upsert: false,
+      });
+      if (up.error) throw up.error;
+      const ins = await supabase.from("book_assets").insert({
+        title: title.trim(),
+        description: description.trim() || null,
+        kind,
+        visibility,
+        storage_path: path,
+        file_name: file.name,
+        file_size: file.size,
+        mime_type: file.type || null,
+        uploaded_by: userId,
+      });
+      if (ins.error) throw ins.error;
+      toast.success("File uploaded.");
+      setTitle(""); setDescription(""); setFile(null);
+      if (inputRef.current) inputRef.current.value = "";
+      onChanged();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Upload failed.";
+      toast.error(msg);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async (a: BookAsset) => {
+    if (!confirm(`Delete "${a.title}"?`)) return;
+    const s = await supabase.storage.from("book-assets").remove([a.storage_path]);
+    if (s.error) return toast.error(s.error.message);
+    const d = await supabase.from("book_assets").delete().eq("id", a.id);
+    if (d.error) return toast.error(d.error.message);
+    toast.success("Deleted.");
+    onChanged();
+  };
+
+  const publicUrl = (path: string) => supabase.storage.from("book-assets").getPublicUrl(path).data.publicUrl;
+
+  return (
+    <div className="grid gap-6">
+      <Card>
+        <div className="flex items-center gap-2">
+          <Upload className="size-4 text-gold" />
+          <p className="font-display text-lg text-ink">Upload a new file</p>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">Chapter PDFs, sample chapters, bonus material.</p>
+        <form onSubmit={upload} className="mt-5 grid gap-4 md:grid-cols-2">
+          <label className="grid gap-1.5 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+            Title
+            <input value={title} onChange={(e) => setTitle(e.target.value)} required className="border border-border bg-paper px-3 py-2 font-serif text-base text-ink outline-none focus:border-ink" />
+          </label>
+          <label className="grid gap-1.5 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+            Kind
+            <select value={kind} onChange={(e) => setKind(e.target.value)} className="border border-border bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-ink">
+              <option value="chapter">Chapter</option>
+              <option value="sample">Sample</option>
+              <option value="bonus">Bonus</option>
+              <option value="other">Other</option>
+            </select>
+          </label>
+          <label className="grid gap-1.5 text-xs uppercase tracking-[0.16em] text-muted-foreground md:col-span-2">
+            Description
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className="border border-border bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-ink" />
+          </label>
+          <label className="grid gap-1.5 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+            Access
+            <select value={visibility} onChange={(e) => setVisibility(e.target.value)} className="border border-border bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-ink">
+              <option value="public">Public — anyone with link</option>
+              <option value="subscribers">Subscribers — signed-in readers</option>
+              <option value="private">Private — admin only</option>
+            </select>
+          </label>
+          <label className="grid gap-1.5 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+            File
+            <input ref={inputRef} type="file" accept="application/pdf,application/epub+zip,image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} required className="border border-border bg-paper px-3 py-2 text-sm text-ink file:mr-3 file:border-0 file:bg-ink file:px-3 file:py-1 file:text-paper" />
+          </label>
+          <div className="md:col-span-2">
+            <button disabled={busy} type="submit" className="inline-flex items-center gap-2 border border-ink bg-ink px-5 py-2.5 text-[0.72rem] uppercase tracking-[0.18em] text-paper transition-colors hover:bg-transparent hover:text-ink disabled:opacity-60">
+              {busy ? <Loader2 className="size-3.5 animate-spin" /> : <Upload className="size-3.5" />} {busy ? "Uploading…" : "Upload file"}
+            </button>
+          </div>
+        </form>
+      </Card>
+
+      {assets.length === 0 ? <EmptyState>No files uploaded yet.</EmptyState> : (
+        <div className="grid gap-3">
+          {assets.map((a) => (
+            <Card key={a.id}>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  <FileText className="mt-1 size-5 text-gold" />
+                  <div>
+                    <p className="font-display text-lg text-ink">{a.title}
+                      <span className="ml-2 rounded-full bg-gold/20 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.15em] text-ink">{a.kind}</span>
+                      <span className="ml-2 rounded-full bg-ink/10 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.15em] text-muted-foreground">{a.visibility}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">{a.file_name}{a.file_size ? ` · ${(a.file_size/1024).toFixed(0)} KB` : ""} · {new Date(a.created_at).toLocaleDateString()}</p>
+                    {a.description ? <p className="mt-2 text-sm text-muted-foreground">{a.description}</p> : null}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <a href={publicUrl(a.storage_path)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 border border-border px-3 py-2 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground hover:border-ink hover:text-ink">
+                    <ExternalLink className="size-3.5" /> Open
+                  </a>
+                  <button onClick={() => remove(a)} className="inline-flex items-center gap-1 border border-border px-3 py-2 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground hover:border-ink hover:text-ink">
+                    <Trash2 className="size-3.5" /> Delete
+                  </button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
