@@ -32,6 +32,9 @@ function ContactPage() {
             <p className="mt-8 font-serif text-2xl text-ink">
               <a href={`mailto:${SITE.email}`} className="border-b border-ink pb-1 hover:text-gold hover:border-gold">{SITE.email}</a>
             </p>
+            <p className="mt-4 font-serif text-lg text-ink">
+              <a href={`tel:${SITE.phoneHref}`} className="border-b border-ink pb-1 hover:text-gold hover:border-gold">{SITE.phone}</a>
+            </p>
             <div className="mt-12 grid gap-6 text-sm text-muted-foreground">
               <div>
                 <p className="eyebrow">Workshops</p>
@@ -53,6 +56,9 @@ function ContactPage() {
             fields={[
               { name: "name", label: "Your name", required: true },
               { name: "email", label: "Email", type: "email", required: true },
+              { name: "phone", label: "Phone", type: "tel", placeholder: "Include country code" },
+              { name: "country", label: "Country" },
+              { name: "source", label: "Where did you hear about the book?", type: "select", options: ["A friend or colleague", "Search / Google", "Instagram", "LinkedIn", "Podcast or interview", "Workshop or event", "Other"] },
               { name: "subject", label: "Subject", required: true },
               { name: "message", label: "Message", type: "textarea", required: true },
             ]}

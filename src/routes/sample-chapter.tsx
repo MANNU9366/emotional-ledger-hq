@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Section, SectionEyebrow } from "@/components/site/Section";
 import { EnquiryForm } from "@/components/site/EnquiryForm";
+import { SITE } from "@/lib/site-content";
 
 export const Route = createFileRoute("/sample-chapter")({
   head: () => ({
@@ -36,6 +37,16 @@ function SamplePage() {
             </ul>
             <p className="mt-8 font-serif text-base text-muted-foreground">
               We only email you what you asked for. Unsubscribe with a click.
+            </p>
+            <p className="mt-6">
+              <a
+                href={SITE.sampleUrl}
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center gap-2 border border-ink bg-ink px-5 py-3 text-[0.7rem] uppercase tracking-[0.2em] text-paper hover:bg-transparent hover:text-ink"
+              >
+                Download the sample PDF
+              </a>
             </p>
           </div>
           <div>

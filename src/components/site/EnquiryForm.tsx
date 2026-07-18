@@ -44,6 +44,10 @@ export function EnquiryForm({
       for (const [k, v] of Object.entries(values)) {
         if (!known.includes(k) && v) meta[k] = v;
       }
+      meta.submitted_at = new Date().toISOString();
+      if (typeof window !== "undefined") {
+        meta.page = window.location.pathname;
+      }
       await submitEnquiry({
         kind,
         name: values.name,
@@ -56,9 +60,10 @@ export function EnquiryForm({
       });
       toast.success(successMessage);
       setValues({});
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      toast.error("Something went wrong. Please try again in a moment.");
+      const msg = err instanceof Error ? err.message : "Something went wrong. Please try again in a moment.";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

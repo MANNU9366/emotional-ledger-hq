@@ -28,6 +28,15 @@ export type EnquiryInput = {
 };
 
 export async function submitEnquiry(input: EnquiryInput) {
+  // Simple client-side spam guard: block identical submissions within 60s.
+  if (typeof window !== "undefined") {
+    const key = `el:last-enquiry:${input.kind}:${input.email.trim().toLowerCase()}`;
+    const prev = Number(window.localStorage.getItem(key) ?? 0);
+    if (Date.now() - prev < 60_000) {
+      throw new Error("You just sent this a moment ago — please wait before resending.");
+    }
+    window.localStorage.setItem(key, String(Date.now()));
+  }
   const { error } = await supabase.from("enquiries").insert({
     kind: input.kind,
     name: input.name?.trim() || null,

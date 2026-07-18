@@ -3,7 +3,11 @@ export const SITE = {
   tagline: "A book on the hidden cost of unprocessed emotions.",
   author: "The Author",
   authorShort: "Author",
-  email: "hello@emotionalledger.com",
+  email: "emotionalledger@gmail.com",
+  phone: "+91 93668 42735",
+  phoneHref: "+919366842735",
+  sampleUrl: "/emotional-ledger-sample.pdf",
+  developer: "Mannu",
   url: "https://emotionalledger.com",
   yearFounded: 2025,
 };
