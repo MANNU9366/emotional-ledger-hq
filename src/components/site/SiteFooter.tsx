@@ -44,11 +44,18 @@ export function SiteFooter() {
 
       <div className="border-t border-border">
         <div className="container-editorial flex flex-col items-start justify-between gap-4 py-6 text-xs text-muted-foreground md:flex-row md:items-center">
-          <p>
-            © {new Date().getFullYear()} {SITE.name}. All rights reserved. A quiet
-            book for a noisy time.
-          </p>
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
+          <div className="flex flex-col gap-1">
+            <p>
+              © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+            </p>
+            <p>
+              Website designed &amp; developed by{" "}
+              <span className="text-ink">{SITE.developer}</span>.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <a href={`mailto:${SITE.email}`} className="hover:text-ink">{SITE.email}</a>
+            <a href={`tel:${SITE.phoneHref}`} className="hover:text-ink">{SITE.phone}</a>
             <Link to="/privacy" className="hover:text-ink">Privacy</Link>
             <Link to="/terms" className="hover:text-ink">Terms</Link>
             <Link to="/contact" className="hover:text-ink">Contact</Link>
