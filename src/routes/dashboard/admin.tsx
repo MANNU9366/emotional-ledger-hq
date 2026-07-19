@@ -5,6 +5,11 @@ import { Check, X, Star, Loader2, Upload, FileText, Trash2, ExternalLink } from 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/DashboardShell";
+import {
+  PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  LineChart, Line,
+} from "recharts";
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({ meta: [{ title: "Admin dashboard — Emotional Ledger" }, { name: "robots", content: "noindex" }] }),
@@ -18,7 +23,7 @@ type Order = { id: string; retailer: string; order_number: string | null; quanti
 type BookAsset = { id: string; title: string; description: string | null; kind: string; storage_path: string; file_name: string; file_size: number | null; mime_type: string | null; visibility: string; created_at: string };
 
 function AdminDashboard() {
-  const [tab, setTab] = useState("testimonials");
+  const [tab, setTab] = useState("analytics");
   const [loading, setLoading] = useState(true);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -73,6 +78,7 @@ function AdminDashboard() {
         active={tab}
         onChange={setTab}
         tabs={[
+          { key: "analytics", label: "Analytics" },
           { key: "testimonials", label: "Testimonials", count: pending },
           { key: "enquiries", label: "Enquiries", count: enquiries.length },
           { key: "subscribers", label: "Subscribers", count: subscribers.length },
@@ -84,6 +90,15 @@ function AdminDashboard() {
         <div className="flex items-center justify-center py-16"><Loader2 className="size-6 animate-spin text-muted-foreground" /></div>
       ) : (
         <div className="mt-8 grid gap-4">
+          {tab === "analytics" && (
+            <AnalyticsPanel
+              testimonials={testimonials}
+              subscribers={subscribers}
+              enquiries={enquiries}
+              orders={orders}
+              assets={assets}
+            />
+          )}
           {tab === "testimonials" && (
             testimonials.length === 0 ? <EmptyState>No testimonials yet.</EmptyState> :
             testimonials.map((t) => (
