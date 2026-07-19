@@ -6,8 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { inputCls, primaryBtn } from "@/components/site/AuthCard";
 import type { AppRole } from "@/lib/auth";
 
-export function LoginForm({ requiredRole, redirectTo }: { requiredRole: AppRole; redirectTo: string }) {
+export function LoginForm({ requiredRole: initialRole, redirectTo }: { requiredRole: AppRole; redirectTo: string }) {
   const nav = useNavigate();
+  const [requiredRole, setRequiredRole] = useState<AppRole>(initialRole);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,11 +32,31 @@ export function LoginForm({ requiredRole, redirectTo }: { requiredRole: AppRole;
       return toast.error(`This account is not registered as ${requiredRole}.`);
     }
     toast.success("Welcome back.");
-    nav({ to: redirectTo });
+    const dest = requiredRole === "admin" ? "/dashboard/admin" : requiredRole === "author" ? "/dashboard/author" : requiredRole === "buyer" ? "/dashboard/buyer" : redirectTo;
+    nav({ to: dest });
   };
 
   return (
     <form onSubmit={onSubmit} className="grid gap-5">
+      {initialRole !== "admin" ? (
+        <div className="grid grid-cols-2 gap-2">
+          {([
+            { role: "buyer" as AppRole, label: "Sign in by Reader & Buyer" },
+            { role: "author" as AppRole, label: "Sign in by Author" },
+          ]).map((opt) => (
+            <button
+              key={opt.role}
+              type="button"
+              onClick={() => setRequiredRole(opt.role)}
+              className={`border px-3 py-3 text-[0.68rem] uppercase tracking-[0.16em] transition-colors ${
+                requiredRole === opt.role ? "border-ink bg-ink text-paper" : "border-border text-ink hover:border-ink"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
       <div className="grid gap-2">
         <label className="eyebrow text-[0.65rem]" htmlFor="email">Email</label>
         <input id="email" type="email" required autoComplete="email" className={inputCls}
