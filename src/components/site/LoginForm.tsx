@@ -15,6 +15,9 @@ export function LoginForm({ requiredRole: initialRole, redirectTo }: { requiredR
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (requiredRole === "admin" && email.trim().toLowerCase() !== "emotionalledger@gmail.com") {
+      return toast.error("Admin access is restricted to the owner account.");
+    }
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim().toLowerCase(),

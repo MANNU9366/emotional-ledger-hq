@@ -5,6 +5,11 @@ import { Check, X, Star, Loader2, Upload, FileText, Trash2, ExternalLink } from 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/DashboardShell";
+import {
+  PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  LineChart, Line,
+} from "recharts";
 
 export const Route = createFileRoute("/dashboard/admin")({
   head: () => ({ meta: [{ title: "Admin dashboard — Emotional Ledger" }, { name: "robots", content: "noindex" }] }),
@@ -18,7 +23,7 @@ type Order = { id: string; retailer: string; order_number: string | null; quanti
 type BookAsset = { id: string; title: string; description: string | null; kind: string; storage_path: string; file_name: string; file_size: number | null; mime_type: string | null; visibility: string; created_at: string };
 
 function AdminDashboard() {
-  const [tab, setTab] = useState("testimonials");
+  const [tab, setTab] = useState("analytics");
   const [loading, setLoading] = useState(true);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -73,6 +78,7 @@ function AdminDashboard() {
         active={tab}
         onChange={setTab}
         tabs={[
+          { key: "analytics", label: "Analytics" },
           { key: "testimonials", label: "Testimonials", count: pending },
           { key: "enquiries", label: "Enquiries", count: enquiries.length },
           { key: "subscribers", label: "Subscribers", count: subscribers.length },
@@ -84,6 +90,15 @@ function AdminDashboard() {
         <div className="flex items-center justify-center py-16"><Loader2 className="size-6 animate-spin text-muted-foreground" /></div>
       ) : (
         <div className="mt-8 grid gap-4">
+          {tab === "analytics" && (
+            <AnalyticsPanel
+              testimonials={testimonials}
+              subscribers={subscribers}
+              enquiries={enquiries}
+              orders={orders}
+              assets={assets}
+            />
+          )}
           {tab === "testimonials" && (
             testimonials.length === 0 ? <EmptyState>No testimonials yet.</EmptyState> :
             testimonials.map((t) => (
@@ -336,6 +351,150 @@ function AssetsPanel({ assets, userId, onChanged }: { assets: BookAsset[]; userI
           ))}
         </div>
       )}
+    </div>
+  );
+}
+const CHART_COLORS = ["#c9a24a", "#1a1a1a", "#8a6d3b", "#c7b98a", "#5a5a5a", "#e5d9b6", "#3f3f3f"];
+
+function StatTile({ label, value, hint }: { label: string; value: number | string; hint?: string }) {
+  return (
+    <Card>
+      <p className="text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
+      <p className="mt-2 font-display text-3xl text-ink">{value}</p>
+      {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
+    </Card>
+  );
+}
+
+function AnalyticsPanel({ testimonials, subscribers, enquiries, orders, assets }: {
+  testimonials: Testimonial[]; subscribers: Subscriber[]; enquiries: Enquiry[]; orders: Order[]; assets: BookAsset[];
+}) {
+  const approved = testimonials.filter((t) => t.approved).length;
+  const pending = testimonials.length - approved;
+
+  const enquiriesByKind = Object.entries(
+    enquiries.reduce<Record<string, number>>((acc, e) => { acc[e.kind] = (acc[e.kind] ?? 0) + 1; return acc; }, {})
+  ).map(([name, value]) => ({ name, value }));
+
+  const audiencePie = [
+    { name: "Subscribers", value: subscribers.length },
+    { name: "Buyers (orders)", value: orders.length },
+    { name: "Enquiries", value: enquiries.length },
+    { name: "Reviews", value: testimonials.length },
+  ].filter((d) => d.value > 0);
+
+  // Build a 12-week signup/activity trend
+  const weeks: { label: string; subs: number; orders: number; enq: number }[] = [];
+  const now = new Date();
+  for (let i = 11; i >= 0; i--) {
+    const end = new Date(now); end.setDate(end.getDate() - i * 7);
+    const start = new Date(end); start.setDate(start.getDate() - 7);
+    const inRange = (d: string) => { const t = new Date(d).getTime(); return t >= start.getTime() && t < end.getTime(); };
+    weeks.push({
+      label: `${end.getMonth() + 1}/${end.getDate()}`,
+      subs: subscribers.filter((s) => inRange(s.created_at)).length,
+      orders: orders.filter((o) => inRange(o.created_at)).length,
+      enq: enquiries.filter((e) => inRange(e.created_at)).length,
+    });
+  }
+
+  const ordersByStatus = Object.entries(
+    orders.reduce<Record<string, number>>((acc, o) => { acc[o.status ?? "unknown"] = (acc[o.status ?? "unknown"] ?? 0) + 1; return acc; }, {})
+  ).map(([name, value]) => ({ name, value }));
+
+  return (
+    <div className="grid gap-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <StatTile label="Subscribers" value={subscribers.length} hint="Newsletter opt-ins" />
+        <StatTile label="Buyer orders" value={orders.length} hint="Recorded purchases" />
+        <StatTile label="Enquiries" value={enquiries.length} hint="All channels" />
+        <StatTile label="Reviews" value={`${approved}/${testimonials.length}`} hint={`${pending} pending`} />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <p className="font-display text-lg text-ink">Audience mix</p>
+          <p className="text-xs text-muted-foreground">Where the readership is engaging.</p>
+          <div className="mt-4 h-72 w-full">
+            {audiencePie.length === 0 ? <EmptyState>No activity yet.</EmptyState> : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={audiencePie} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={55} outerRadius={95} paddingAngle={3}>
+                    {audiencePie.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </Card>
+
+        <Card>
+          <p className="font-display text-lg text-ink">Enquiries by type</p>
+          <p className="text-xs text-muted-foreground">Workshops, speaking, corporate, media.</p>
+          <div className="mt-4 h-72 w-full">
+            {enquiriesByKind.length === 0 ? <EmptyState>No enquiries yet.</EmptyState> : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={enquiriesByKind}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e0" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#c9a24a" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </Card>
+
+        <Card className="lg:col-span-2">
+          <p className="font-display text-lg text-ink">Activity — last 12 weeks</p>
+          <p className="text-xs text-muted-foreground">Subscribers, orders, and enquiries over time.</p>
+          <div className="mt-4 h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={weeks}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e0" />
+                <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="subs" name="Subscribers" stroke="#c9a24a" strokeWidth={2} />
+                <Line type="monotone" dataKey="orders" name="Orders" stroke="#1a1a1a" strokeWidth={2} />
+                <Line type="monotone" dataKey="enq" name="Enquiries" stroke="#8a6d3b" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card>
+          <p className="font-display text-lg text-ink">Orders by status</p>
+          <div className="mt-4 h-64 w-full">
+            {ordersByStatus.length === 0 ? <EmptyState>No orders yet.</EmptyState> : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={ordersByStatus} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={85} label>
+                    {ordersByStatus.map((_, i) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </Card>
+
+        <Card>
+          <p className="font-display text-lg text-ink">Library</p>
+          <p className="text-xs text-muted-foreground">Files uploaded to the reader library.</p>
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <StatTile label="Files" value={assets.length} />
+            <StatTile label="Public" value={assets.filter((a) => a.visibility === "public").length} />
+            <StatTile label="Subscribers" value={assets.filter((a) => a.visibility === "subscribers").length} />
+            <StatTile label="Private" value={assets.filter((a) => a.visibility === "private").length} />
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
