@@ -90,6 +90,7 @@ export function SiteHeader() {
           ) : (
             <div className="flex items-center gap-3">
               <Link to="/login/buyer" className="text-[0.75rem] uppercase tracking-[0.18em] text-muted-foreground hover:text-ink">Sign in</Link>
+              <Link to="/login/admin" className="text-[0.75rem] uppercase tracking-[0.18em] text-gold hover:text-ink">Admin</Link>
           <Link
             to="/buy"
             className="inline-flex items-center justify-center border border-ink bg-ink px-4 py-2 text-[0.75rem] uppercase tracking-[0.18em] text-paper transition-colors hover:bg-transparent hover:text-ink"
@@ -142,6 +143,7 @@ export function SiteHeader() {
             ) : (
               <Link to="/login/buyer" onClick={() => setOpen(false)} className="mt-2 px-4 py-3 text-center text-[0.75rem] uppercase tracking-[0.18em] text-ink">Sign in</Link>
             )}
+            <Link to="/login/admin" onClick={() => setOpen(false)} className="mt-1 px-4 py-3 text-center text-[0.72rem] uppercase tracking-[0.18em] text-gold">Admin login</Link>
           </nav>
         </div>
       ) : null}
