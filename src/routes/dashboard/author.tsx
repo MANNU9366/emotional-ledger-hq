@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { Loader2, Heart, MessageCircle, Users, TrendingUp, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/DashboardShell";
-import bookCover from "@/assets/book-cover.jpg";
+import bookCoverAsset from "@/assets/emotional-ledger-cover.png.asset.json";
+const bookCover = bookCoverAsset.url;
 import author from "@/assets/author.jpg";
 
 export const Route = createFileRoute("/dashboard/author")({

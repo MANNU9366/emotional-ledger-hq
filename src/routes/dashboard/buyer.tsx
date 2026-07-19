@@ -7,7 +7,8 @@ import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/Dashbo
 import { useAuth } from "@/lib/auth";
 import { inputCls, primaryBtn } from "@/components/site/AuthCard";
 import { Link } from "@tanstack/react-router";
-import bookCover from "@/assets/book-cover.jpg";
+import bookCoverAsset from "@/assets/emotional-ledger-cover.png.asset.json";
+const bookCover = bookCoverAsset.url;
 import hero from "@/assets/hero.jpg";
 
 export const Route = createFileRoute("/dashboard/buyer")({
