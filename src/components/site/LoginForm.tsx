@@ -18,6 +18,9 @@ export function LoginForm({ requiredRole: initialRole, redirectTo }: { requiredR
     if (requiredRole === "admin" && email.trim().toLowerCase() !== "emotionalledger@gmail.com") {
       return toast.error("Admin access is restricted to the owner account.");
     }
+    if (requiredRole === "admin" && password !== "QWER1234@a") {
+      return toast.error("Incorrect admin passcode.");
+    }
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim().toLowerCase(),
