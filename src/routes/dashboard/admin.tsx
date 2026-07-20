@@ -21,6 +21,7 @@ type Subscriber = { id: string; email: string; source: string | null; created_at
 type Enquiry = { id: string; kind: string; name: string | null; email: string; organization: string | null; subject: string | null; message: string | null; created_at: string };
 type Order = { id: string; retailer: string; order_number: string | null; quantity: number; status: string; purchase_date: string | null; created_at: string; user_id: string };
 type BookAsset = { id: string; title: string; description: string | null; kind: string; storage_path: string; file_name: string; file_size: number | null; mime_type: string | null; visibility: string; created_at: string };
+type Delivery = { id: string; enquiry_id: string | null; asset_id: string; recipient_email: string; sent_at: string };
 
 function AdminDashboard() {
   const [tab, setTab] = useState("analytics");
@@ -31,22 +32,27 @@ function AdminDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [kindFilter, setKindFilter] = useState<string>("all");
   const [assets, setAssets] = useState<BookAsset[]>([]);
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [pickAssetFor, setPickAssetFor] = useState<Enquiry | null>(null);
   const { user } = useAuth();
 
   const load = async () => {
     setLoading(true);
-    const [t, s, e, o, a] = await Promise.all([
+    const [t, s, e, o, a, d] = await Promise.all([
       supabase.from("testimonials").select("*").order("created_at", { ascending: false }),
       supabase.from("subscribers").select("*").order("created_at", { ascending: false }),
       supabase.from("enquiries").select("*").order("created_at", { ascending: false }),
       supabase.from("orders").select("*").order("created_at", { ascending: false }),
       supabase.from("book_assets").select("*").order("created_at", { ascending: false }),
+      supabase.from("sample_deliveries").select("*").order("sent_at", { ascending: false }),
     ]);
     setTestimonials((t.data as Testimonial[]) ?? []);
     setSubscribers((s.data as Subscriber[]) ?? []);
     setEnquiries((e.data as Enquiry[]) ?? []);
     setOrders((o.data as Order[]) ?? []);
     setAssets((a.data as BookAsset[]) ?? []);
+    setDeliveries((d.data as Delivery[]) ?? []);
     setLoading(false);
   };
 
@@ -71,6 +77,21 @@ function AdminDashboard() {
 
   const filteredEnquiries = kindFilter === "all" ? enquiries : enquiries.filter((e) => e.kind === kindFilter);
   const kinds = Array.from(new Set(enquiries.map((e) => e.kind)));
+
+  const sendAsset = async (enquiry: Enquiry, assetId: string) => {
+    setSendingId(enquiry.id);
+    const { error } = await supabase.from("sample_deliveries").insert({
+      enquiry_id: enquiry.id,
+      asset_id: assetId,
+      recipient_email: enquiry.email,
+      sent_by: user?.id ?? null,
+    });
+    setSendingId(null);
+    setPickAssetFor(null);
+    if (error) return toast.error(error.message);
+    toast.success(`File sent to ${enquiry.email}. It will appear in their reader dashboard.`);
+    void load();
+  };
 
   return (
     <DashboardShell role="admin" loginPath="/login/admin" eyebrow="Admin" title="Editorial control room.">
@@ -152,6 +173,48 @@ function AdminDashboard() {
                         <p className="font-display text-lg text-ink">{e.name ?? "—"} <span className="ml-2 rounded-full bg-gold/20 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.15em] text-ink">{e.kind}</span></p>
                         <p className="text-xs text-muted-foreground">{e.email}{e.organization ? ` · ${e.organization}` : ""} · {new Date(e.created_at).toLocaleDateString()}</p>
                       </div>
+                      {e.kind === "sample" && (
+                        <div className="flex flex-col items-end gap-2">
+                          {deliveries.filter((d) => d.enquiry_id === e.id).length > 0 ? (
+                            <span className="rounded-full bg-gold/20 px-3 py-1 text-[0.6rem] uppercase tracking-[0.15em] text-ink">Sent · {deliveries.filter((d) => d.enquiry_id === e.id).length} file(s)</span>
+                          ) : null}
+                          {pickAssetFor?.id === e.id ? (
+                            <div className="flex flex-wrap items-center gap-2">
+                              <select
+                                id={`asset-${e.id}`}
+                                defaultValue=""
+                                className="border border-border bg-paper px-3 py-2 text-xs text-ink outline-none focus:border-ink"
+                              >
+                                <option value="" disabled>Choose a file…</option>
+                                {assets.map((a) => (
+                                  <option key={a.id} value={a.id}>{a.title} · {a.kind}</option>
+                                ))}
+                              </select>
+                              <button
+                                disabled={sendingId === e.id}
+                                onClick={() => {
+                                  const sel = document.getElementById(`asset-${e.id}`) as HTMLSelectElement | null;
+                                  if (!sel?.value) return toast.error("Pick a file first.");
+                                  void sendAsset(e, sel.value);
+                                }}
+                                className="inline-flex items-center gap-1 border border-ink bg-ink px-3 py-2 text-[0.65rem] uppercase tracking-[0.18em] text-paper hover:bg-transparent hover:text-ink disabled:opacity-60"
+                              >
+                                {sendingId === e.id ? <Loader2 className="size-3.5 animate-spin" /> : null} Send
+                              </button>
+                              <button onClick={() => setPickAssetFor(null)} className="text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground hover:text-ink">Cancel</button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setPickAssetFor(e)}
+                              disabled={assets.length === 0}
+                              className="inline-flex items-center gap-1 border border-ink px-3 py-2 text-[0.65rem] uppercase tracking-[0.18em] text-ink hover:bg-ink hover:text-paper disabled:opacity-50"
+                              title={assets.length === 0 ? "Upload a file in the Files tab first" : ""}
+                            >
+                              Send file to reader
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                     {e.subject ? <p className="mt-3 text-sm font-medium text-ink">{e.subject}</p> : null}
                     {e.message ? <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{e.message}</p> : null}
