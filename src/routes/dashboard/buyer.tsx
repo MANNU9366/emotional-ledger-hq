@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Star, BookOpen, Heart, MessageCircle, Bookmark } from "lucide-react";
+import { Loader2, Plus, Trash2, Star, BookOpen, Heart, MessageCircle, Bookmark, Download, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/DashboardShell";
 import { useAuth } from "@/lib/auth";
@@ -18,12 +18,15 @@ export const Route = createFileRoute("/dashboard/buyer")({
 
 type Order = { id: string; retailer: string; order_number: string | null; quantity: number; purchase_date: string | null; status: string; notes: string | null };
 type MyReview = { id: string; author_name: string; body: string; rating: number | null; approved: boolean; created_at: string };
+type Delivery = { id: string; asset_id: string; sent_at: string; note: string | null };
+type AssetLite = { id: string; title: string; description: string | null; kind: string; storage_path: string; file_name: string };
 
 function BuyerDashboard() {
   const { user } = useAuth();
   const [tab, setTab] = useState("orders");
   const [orders, setOrders] = useState<Order[]>([]);
   const [reviews, setReviews] = useState<MyReview[]>([]);
+  const [deliveries, setDeliveries] = useState<(Delivery & { asset: AssetLite | null })[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ retailer: "Amazon", order_number: "", quantity: 1, purchase_date: "", notes: "" });
@@ -32,12 +35,22 @@ function BuyerDashboard() {
   const load = async () => {
     if (!user) return;
     setLoading(true);
-    const [o, r] = await Promise.all([
+    const [o, r, d] = await Promise.all([
       supabase.from("orders").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
       supabase.from("testimonials").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+      supabase.from("sample_deliveries").select("id, asset_id, sent_at, note").order("sent_at", { ascending: false }),
     ]);
     setOrders((o.data as Order[]) ?? []);
     setReviews((r.data as MyReview[]) ?? []);
+    const drows = (d.data as Delivery[]) ?? [];
+    if (drows.length > 0) {
+      const ids = Array.from(new Set(drows.map((x) => x.asset_id)));
+      const { data: a } = await supabase.from("book_assets").select("id, title, description, kind, storage_path, file_name").in("id", ids);
+      const map = new Map<string, AssetLite>(((a as AssetLite[]) ?? []).map((x) => [x.id, x]));
+      setDeliveries(drows.map((x) => ({ ...x, asset: map.get(x.asset_id) ?? null })));
+    } else {
+      setDeliveries([]);
+    }
     setLoading(false);
   };
 
@@ -108,10 +121,41 @@ function BuyerDashboard() {
         tabs={[
           { key: "orders", label: "My Orders", count: orders.length },
           { key: "reviews", label: "My Reviews", count: reviews.length },
+          { key: "files", label: "Files from author", count: deliveries.length },
         ]}
       />
       </div>
       <div className="mt-8 grid gap-4">
+        {tab === "files" && (
+          deliveries.length === 0 ? (
+            <EmptyState>No files delivered yet. When you request a sample chapter, it will appear here once the author sends it.</EmptyState>
+          ) : (
+            deliveries.map((d) => {
+              const url = d.asset ? supabase.storage.from("book-assets").getPublicUrl(d.asset.storage_path).data.publicUrl : null;
+              return (
+                <Card key={d.id}>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <FileText className="mt-1 size-5 text-gold" />
+                      <div>
+                        <p className="font-display text-lg text-ink">{d.asset?.title ?? "File"}
+                          {d.asset ? <span className="ml-2 rounded-full bg-gold/20 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.15em] text-ink">{d.asset.kind}</span> : null}
+                        </p>
+                        <p className="text-xs text-muted-foreground">Sent {new Date(d.sent_at).toLocaleDateString()}</p>
+                        {d.asset?.description ? <p className="mt-2 text-sm text-muted-foreground">{d.asset.description}</p> : null}
+                      </div>
+                    </div>
+                    {url ? (
+                      <a href={url} target="_blank" rel="noopener" className="inline-flex items-center gap-2 border border-ink bg-ink px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-paper hover:bg-transparent hover:text-ink">
+                        <Download className="size-3.5" /> Download
+                      </a>
+                    ) : null}
+                  </div>
+                </Card>
+              );
+            })
+          )
+        )}
         {tab === "orders" && (
           <>
             <div className="flex justify-end">
