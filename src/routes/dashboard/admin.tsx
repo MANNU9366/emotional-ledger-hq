@@ -337,7 +337,11 @@ function AssetsPanel({ assets, userId, onChanged }: { assets: BookAsset[]; userI
     onChanged();
   };
 
-  const publicUrl = (path: string) => supabase.storage.from("book-assets").getPublicUrl(path).data.publicUrl;
+  const openFile = async (path: string) => {
+    const { data, error } = await supabase.storage.from("book-assets").createSignedUrl(path, 3600);
+    if (error || !data?.signedUrl) return toast.error(error?.message ?? "Could not open file");
+    window.open(data.signedUrl, "_blank", "noopener");
+  };
 
   return (
     <div className="grid gap-6">
@@ -402,9 +406,9 @@ function AssetsPanel({ assets, userId, onChanged }: { assets: BookAsset[]; userI
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <a href={publicUrl(a.storage_path)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 border border-border px-3 py-2 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground hover:border-ink hover:text-ink">
+                  <button onClick={() => openFile(a.storage_path)} className="inline-flex items-center gap-1 border border-border px-3 py-2 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground hover:border-ink hover:text-ink">
                     <ExternalLink className="size-3.5" /> Open
-                  </a>
+                  </button>
                   <button onClick={() => remove(a)} className="inline-flex items-center gap-1 border border-border px-3 py-2 text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground hover:border-ink hover:text-ink">
                     <Trash2 className="size-3.5" /> Delete
                   </button>

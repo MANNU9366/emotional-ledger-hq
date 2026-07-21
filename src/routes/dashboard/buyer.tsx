@@ -131,7 +131,12 @@ function BuyerDashboard() {
             <EmptyState>No files delivered yet. When you request a sample chapter, it will appear here once the author sends it.</EmptyState>
           ) : (
             deliveries.map((d) => {
-              const url = d.asset ? supabase.storage.from("book-assets").getPublicUrl(d.asset.storage_path).data.publicUrl : null;
+              const openDelivery = async () => {
+                if (!d.asset) return;
+                const { data, error } = await supabase.storage.from("book-assets").createSignedUrl(d.asset.storage_path, 3600);
+                if (error || !data?.signedUrl) return toast.error(error?.message ?? "Could not open file");
+                window.open(data.signedUrl, "_blank", "noopener");
+              };
               return (
                 <Card key={d.id}>
                   <div className="flex flex-wrap items-start justify-between gap-3">
@@ -145,10 +150,10 @@ function BuyerDashboard() {
                         {d.asset?.description ? <p className="mt-2 text-sm text-muted-foreground">{d.asset.description}</p> : null}
                       </div>
                     </div>
-                    {url ? (
-                      <a href={url} target="_blank" rel="noopener" className="inline-flex items-center gap-2 border border-ink bg-ink px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-paper hover:bg-transparent hover:text-ink">
+                    {d.asset ? (
+                      <button onClick={openDelivery} className="inline-flex items-center gap-2 border border-ink bg-ink px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-paper hover:bg-transparent hover:text-ink">
                         <Download className="size-3.5" /> Download
-                      </a>
+                      </button>
                     ) : null}
                   </div>
                 </Card>
