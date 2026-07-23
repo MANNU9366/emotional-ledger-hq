@@ -70,6 +70,15 @@ function CheckoutPage() {
         purchase_date: new Date().toISOString().slice(0, 10),
         status: "paid",
         notes: `${item.name} edition · mock checkout`,
+        customer_name: form.name,
+        customer_email: form.email,
+        shipping_address: form.address,
+        city: form.city,
+        zip: form.zip,
+        country: form.country,
+        edition: item.name,
+        unit_price: item.price,
+        total_amount: total,
       });
     }
     setBusy(false);
