@@ -15,6 +15,7 @@ import { Route as SpeakingRouteImport } from './routes/speaking'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SampleChapterRouteImport } from './routes/sample-chapter'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MediaRouteImport } from './routes/media'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -63,6 +64,11 @@ const SignupRoute = SignupRouteImport.update({
 const SampleChapterRoute = SampleChapterRouteImport.update({
   id: '/sample-chapter',
   path: '/sample-chapter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sample-chapter': typeof SampleChapterRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -202,6 +209,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sample-chapter': typeof SampleChapterRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -230,6 +238,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/media': typeof MediaRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sample-chapter': typeof SampleChapterRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/media'
     | '/privacy'
+    | '/reset-password'
     | '/sample-chapter'
     | '/signup'
     | '/sitemap.xml'
@@ -286,6 +296,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/media'
     | '/privacy'
+    | '/reset-password'
     | '/sample-chapter'
     | '/signup'
     | '/sitemap.xml'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/media'
     | '/privacy'
+    | '/reset-password'
     | '/sample-chapter'
     | '/signup'
     | '/sitemap.xml'
@@ -341,6 +353,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   MediaRoute: typeof MediaRoute
   PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SampleChapterRoute: typeof SampleChapterRoute
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -397,6 +410,13 @@ declare module '@tanstack/react-router' {
       path: '/sample-chapter'
       fullPath: '/sample-chapter'
       preLoaderRoute: typeof SampleChapterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -549,6 +569,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   MediaRoute: MediaRoute,
   PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SampleChapterRoute: SampleChapterRoute,
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
