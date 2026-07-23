@@ -18,7 +18,7 @@ export const Route = createFileRoute("/dashboard/admin")({
 
 type Testimonial = { id: string; author_name: string; role_title: string | null; rating: number | null; body: string; approved: boolean; created_at: string };
 type Subscriber = { id: string; email: string; source: string | null; created_at: string };
-type Enquiry = { id: string; kind: string; name: string | null; email: string; organization: string | null; subject: string | null; message: string | null; created_at: string };
+type Enquiry = { id: string; kind: string; name: string | null; email: string; phone: string | null; organization: string | null; subject: string | null; message: string | null; meta: Record<string, unknown> | null; created_at: string };
 type Order = {
   id: string; retailer: string; order_number: string | null; quantity: number; status: string;
   purchase_date: string | null; created_at: string; user_id: string;
@@ -224,6 +224,17 @@ function AdminDashboard() {
                     </div>
                     {e.subject ? <p className="mt-3 text-sm font-medium text-ink">{e.subject}</p> : null}
                     {e.message ? <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">{e.message}</p> : null}
+                    {e.phone ? <p className="mt-2 text-xs text-muted-foreground">Phone: <span className="text-ink">{e.phone}</span></p> : null}
+                    {e.meta && typeof e.meta === "object" && Object.keys(e.meta).length > 0 ? (
+                      <dl className="mt-3 grid gap-1 border-t border-border pt-3 text-xs sm:grid-cols-2">
+                        {Object.entries(e.meta).map(([k, v]) => (
+                          <div key={k} className="flex gap-2">
+                            <dt className="min-w-[7rem] uppercase tracking-[0.15em] text-[0.6rem] text-muted-foreground">{k.replace(/([A-Z])/g, " $1").replace(/_/g, " ")}</dt>
+                            <dd className="flex-1 break-words text-ink">{typeof v === "string" || typeof v === "number" || typeof v === "boolean" ? String(v) : JSON.stringify(v)}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    ) : null}
                   </Card>
                 ))}
             </>
