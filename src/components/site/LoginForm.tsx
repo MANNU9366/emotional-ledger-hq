@@ -12,6 +12,19 @@ export function LoginForm({ requiredRole: initialRole, redirectTo }: { requiredR
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
+
+  const forgotPassword = async () => {
+    const target = email.trim().toLowerCase();
+    if (!target) return toast.error("Enter your email above, then tap Forgot password.");
+    setResetting(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(target, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setResetting(false);
+    if (error) return toast.error(error.message);
+    toast.success("Reset link sent. Check your inbox.");
+  };
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -78,10 +91,20 @@ export function LoginForm({ requiredRole: initialRole, redirectTo }: { requiredR
         Sign in
       </button>
       {requiredRole !== "admin" ? (
-        <p className="text-center text-xs text-muted-foreground">
-          New here?{" "}
-          <Link to="/signup" className="border-b border-ink hover:text-gold hover:border-gold">Create an account</Link>
-        </p>
+        <div className="grid gap-2 text-center text-xs text-muted-foreground">
+          <button
+            type="button"
+            onClick={forgotPassword}
+            disabled={resetting}
+            className="mx-auto inline-flex items-center gap-1 text-ink underline-offset-4 hover:text-gold hover:underline disabled:opacity-60"
+          >
+            {resetting ? <Loader2 className="size-3 animate-spin" /> : null} Forgot password?
+          </button>
+          <p>
+            New here?{" "}
+            <Link to="/signup" className="border-b border-ink hover:text-gold hover:border-gold">Create an account</Link>
+          </p>
+        </div>
       ) : (
         <p className="text-center text-xs text-muted-foreground">Admin access is granted manually.</p>
       )}

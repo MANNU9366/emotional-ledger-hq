@@ -95,10 +95,11 @@ function BuyerDashboard() {
             <div>
               <p className="eyebrow">Currently reading</p>
               <h2 className="mt-2 font-display text-2xl leading-tight text-ink md:text-3xl">Emotional Ledger</h2>
-              <div className="mt-3 h-1.5 w-full max-w-xs bg-ink/10">
-                <div className="h-full bg-gold" style={{ width: "42%" }} />
-              </div>
-              <p className="mt-2 text-xs uppercase tracking-[0.16em] text-muted-foreground">Chapter IV · 42% complete</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {orders.length > 0
+                  ? `You have ${orders.length} order${orders.length === 1 ? "" : "s"} on file${deliveries.length ? ` and ${deliveries.length} file${deliveries.length === 1 ? "" : "s"} from the author` : ""}.`
+                  : "No orders yet — grab a copy or request the sample chapter."}
+              </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link to="/sample-chapter" className="inline-flex items-center gap-2 border border-ink px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-ink hover:bg-ink hover:text-paper"><BookOpen className="size-3.5" /> Continue reading</Link>
                 <Link to="/buy" className="inline-flex items-center gap-2 border border-ink bg-ink px-4 py-2 text-[0.7rem] uppercase tracking-[0.18em] text-paper hover:bg-transparent hover:text-ink">Buy another edition</Link>
@@ -109,8 +110,8 @@ function BuyerDashboard() {
         <div className="grid grid-cols-2 gap-4">
           <Card><p className="eyebrow flex items-center gap-1.5"><Bookmark className="size-3 text-gold" /> Orders</p><p className="mt-2 font-display text-3xl text-ink">{orders.length}</p></Card>
           <Card><p className="eyebrow flex items-center gap-1.5"><Star className="size-3 text-gold" /> Reviews</p><p className="mt-2 font-display text-3xl text-ink">{reviews.length}</p></Card>
-          <Card><p className="eyebrow flex items-center gap-1.5"><Heart className="size-3 text-gold" /> Highlights</p><p className="mt-2 font-display text-3xl text-ink">24</p></Card>
-          <Card><p className="eyebrow flex items-center gap-1.5"><MessageCircle className="size-3 text-gold" /> Notes</p><p className="mt-2 font-display text-3xl text-ink">7</p></Card>
+          <Card><p className="eyebrow flex items-center gap-1.5"><Heart className="size-3 text-gold" /> Published</p><p className="mt-2 font-display text-3xl text-ink">{reviews.filter((r) => r.approved).length}</p></Card>
+          <Card><p className="eyebrow flex items-center gap-1.5"><MessageCircle className="size-3 text-gold" /> Files</p><p className="mt-2 font-display text-3xl text-ink">{deliveries.length}</p></Card>
         </div>
       </div>
 

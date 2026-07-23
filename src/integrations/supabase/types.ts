@@ -100,40 +100,70 @@ export type Database = {
       }
       orders: {
         Row: {
+          city: string | null
+          country: string | null
           created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          edition: string | null
           id: string
           notes: string | null
           order_number: string | null
+          phone: string | null
           purchase_date: string | null
           quantity: number
           retailer: string
+          shipping_address: string | null
           status: string
+          total_amount: number | null
+          unit_price: number | null
           updated_at: string
           user_id: string
+          zip: string | null
         }
         Insert: {
+          city?: string | null
+          country?: string | null
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          edition?: string | null
           id?: string
           notes?: string | null
           order_number?: string | null
+          phone?: string | null
           purchase_date?: string | null
           quantity?: number
           retailer: string
+          shipping_address?: string | null
           status?: string
+          total_amount?: number | null
+          unit_price?: number | null
           updated_at?: string
           user_id: string
+          zip?: string | null
         }
         Update: {
+          city?: string | null
+          country?: string | null
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          edition?: string | null
           id?: string
           notes?: string | null
           order_number?: string | null
+          phone?: string | null
           purchase_date?: string | null
           quantity?: number
           retailer?: string
+          shipping_address?: string | null
           status?: string
+          total_amount?: number | null
+          unit_price?: number | null
           updated_at?: string
           user_id?: string
+          zip?: string | null
         }
         Relationships: []
       }

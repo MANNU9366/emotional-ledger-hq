@@ -13,21 +13,29 @@ export const Route = createFileRoute("/dashboard/author")({
 });
 
 type Enquiry = { id: string; kind: string; name: string | null; email: string; organization: string | null; subject: string | null; message: string | null; created_at: string };
+type Order = { id: string; quantity: number; total_amount: number | null; created_at: string; status: string };
+type Testimonial = { id: string; author_name: string; body: string; rating: number | null; approved: boolean; created_at: string };
 
 function AuthorDashboard() {
   const [tab, setTab] = useState("workshop");
   const [loading, setLoading] = useState(true);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [subCount, setSubCount] = useState(0);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [reviews, setReviews] = useState<Testimonial[]>([]);
 
   useEffect(() => {
     (async () => {
-      const [e, s] = await Promise.all([
+      const [e, s, o, r] = await Promise.all([
         supabase.from("enquiries").select("*").order("created_at", { ascending: false }),
         supabase.from("subscribers").select("id", { count: "exact", head: true }),
+        supabase.from("orders").select("id, quantity, total_amount, created_at, status").order("created_at", { ascending: false }),
+        supabase.from("testimonials").select("*").order("created_at", { ascending: false }),
       ]);
       setEnquiries((e.data as Enquiry[]) ?? []);
       setSubCount(s.count ?? 0);
+      setOrders((o.data as Order[]) ?? []);
+      setReviews((r.data as Testimonial[]) ?? []);
       setLoading(false);
     })();
   }, []);
@@ -37,12 +45,21 @@ function AuthorDashboard() {
   const list = enquiries.filter((e) => e.kind === tab);
 
   const nf = (n: number) => new Intl.NumberFormat("en-US").format(n);
+  const now = Date.now();
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+  const soldWeek = orders.filter((o) => now - new Date(o.created_at).getTime() < weekMs).reduce((s, o) => s + (o.quantity ?? 0), 0);
+  const copiesSold = orders.reduce((s, o) => s + (o.quantity ?? 0), 0);
+  const revenue = orders.reduce((s, o) => s + Number(o.total_amount ?? 0), 0);
+  const approvedReviews = reviews.filter((r) => r.approved);
+  const ratings = approvedReviews.map((r) => r.rating).filter((v): v is number => typeof v === "number");
+  const avgRating = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length) : 0;
   const activity = [
-    { label: "Copies sold this week", value: 428, delta: "+12%" },
-    { label: "Reader likes", value: 11540, delta: "+3.4%" },
-    { label: "Reviews (avg 4.8★)", value: 1488, delta: "+22 new" },
-    { label: "Comments in journal", value: 782, delta: "+18 today" },
+    { label: "Copies sold — 7 days", value: soldWeek, delta: `${soldWeek} this week` },
+    { label: "Copies sold — all time", value: copiesSold, delta: `${orders.length} orders` },
+    { label: `Reviews (avg ${avgRating ? avgRating.toFixed(1) : "0.0"}★)`, value: approvedReviews.length, delta: `${reviews.length - approvedReviews.length} pending` },
+    { label: "Revenue (USD)", value: Math.round(revenue), delta: revenue ? `$${revenue.toFixed(2)}` : "—" },
   ];
+  const recentReviews = approvedReviews.slice(0, 3);
 
   return (
     <DashboardShell role="author" loginPath="/login/author" eyebrow="Author" title="Your reader signals.">
@@ -119,19 +136,19 @@ function AuthorDashboard() {
         )}
       </div>
 
-      <div className="mt-12 grid gap-4 md:grid-cols-3">
-        {[
-          { q: "Every chapter has felt like a mirror I didn't know I needed.", by: "Marta, London", rating: 5 },
-          { q: "The audiobook is haunting — in the best possible way.", by: "Dev, Toronto", rating: 5 },
-          { q: "Required reading for anyone leading a team through change.", by: "Anika, Berlin", rating: 5 },
-        ].map((r) => (
-          <Card key={r.by}>
-            <div className="flex gap-0.5 text-gold">{Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="size-3.5 fill-gold" />)}</div>
-            <p className="mt-3 font-serif text-ink">"{r.q}"</p>
-            <p className="mt-3 text-xs uppercase tracking-[0.16em] text-muted-foreground">— {r.by}</p>
-          </Card>
-        ))}
-      </div>
+      {recentReviews.length > 0 ? (
+        <div className="mt-12 grid gap-4 md:grid-cols-3">
+          {recentReviews.map((r) => (
+            <Card key={r.id}>
+              {r.rating ? (
+                <div className="flex gap-0.5 text-gold">{Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="size-3.5 fill-gold" />)}</div>
+              ) : null}
+              <p className="mt-3 font-serif text-ink">"{r.body}"</p>
+              <p className="mt-3 text-xs uppercase tracking-[0.16em] text-muted-foreground">— {r.author_name}</p>
+            </Card>
+          ))}
+        </div>
+      ) : null}
     </DashboardShell>
   );
 }
