@@ -19,7 +19,13 @@ export const Route = createFileRoute("/dashboard/admin")({
 type Testimonial = { id: string; author_name: string; role_title: string | null; rating: number | null; body: string; approved: boolean; created_at: string };
 type Subscriber = { id: string; email: string; source: string | null; created_at: string };
 type Enquiry = { id: string; kind: string; name: string | null; email: string; organization: string | null; subject: string | null; message: string | null; created_at: string };
-type Order = { id: string; retailer: string; order_number: string | null; quantity: number; status: string; purchase_date: string | null; created_at: string; user_id: string };
+type Order = {
+  id: string; retailer: string; order_number: string | null; quantity: number; status: string;
+  purchase_date: string | null; created_at: string; user_id: string;
+  customer_name: string | null; customer_email: string | null; phone: string | null;
+  shipping_address: string | null; city: string | null; zip: string | null; country: string | null;
+  edition: string | null; unit_price: number | null; total_amount: number | null; notes: string | null;
+};
 type BookAsset = { id: string; title: string; description: string | null; kind: string; storage_path: string; file_name: string; file_size: number | null; mime_type: string | null; visibility: string; created_at: string };
 type Delivery = { id: string; enquiry_id: string | null; asset_id: string; recipient_email: string; sent_at: string };
 
@@ -247,30 +253,38 @@ function AdminDashboard() {
           )}
           {tab === "orders" && (
             orders.length === 0 ? <EmptyState>No buyer orders logged yet.</EmptyState> :
-            <Card className="overflow-x-auto p-0">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border/60 text-left text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground">
-                    <th className="px-4 py-3">Retailer</th>
-                    <th className="px-4 py-3">Order #</th>
-                    <th className="px-4 py-3">Qty</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Purchased</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((o) => (
-                    <tr key={o.id} className="border-b border-border/40 last:border-0">
-                      <td className="px-4 py-3 text-ink">{o.retailer}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{o.order_number ?? "—"}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{o.quantity}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{o.status}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{o.purchase_date ?? "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Card>
+            orders.map((o) => (
+              <Card key={o.id}>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-display text-lg text-ink">
+                      {o.customer_name ?? "Customer"}
+                      <span className="ml-2 rounded-full bg-gold/20 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.15em] text-ink">{o.status}</span>
+                      {o.edition ? <span className="ml-2 rounded-full bg-ink/10 px-2 py-0.5 text-[0.6rem] uppercase tracking-[0.15em] text-muted-foreground">{o.edition}</span> : null}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {o.customer_email ?? "—"}{o.phone ? ` · ${o.phone}` : ""} · {o.retailer}
+                      {o.order_number ? ` · #${o.order_number}` : ""} · {new Date(o.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-display text-lg text-ink">
+                      {o.total_amount != null ? `$${Number(o.total_amount).toFixed(2)}` : "—"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Qty {o.quantity}{o.unit_price != null ? ` · $${Number(o.unit_price).toFixed(2)}/unit` : ""}</p>
+                  </div>
+                </div>
+                {(o.shipping_address || o.city || o.country) ? (
+                  <div className="mt-3 border-t border-border/60 pt-3 text-sm text-muted-foreground">
+                    <p className="eyebrow text-[0.6rem]">Ship to</p>
+                    <p className="mt-1 text-ink">
+                      {[o.shipping_address, o.city, o.zip, o.country].filter(Boolean).join(", ")}
+                    </p>
+                  </div>
+                ) : null}
+                {o.notes ? <p className="mt-2 text-xs text-muted-foreground">{o.notes}</p> : null}
+              </Card>
+            ))
           )}
           {tab === "assets" && (
             <AssetsPanel assets={assets} userId={user?.id ?? null} onChanged={load} />
