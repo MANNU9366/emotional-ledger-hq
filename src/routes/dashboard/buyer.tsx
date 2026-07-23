@@ -109,8 +109,8 @@ function BuyerDashboard() {
         <div className="grid grid-cols-2 gap-4">
           <Card><p className="eyebrow flex items-center gap-1.5"><Bookmark className="size-3 text-gold" /> Orders</p><p className="mt-2 font-display text-3xl text-ink">{orders.length}</p></Card>
           <Card><p className="eyebrow flex items-center gap-1.5"><Star className="size-3 text-gold" /> Reviews</p><p className="mt-2 font-display text-3xl text-ink">{reviews.length}</p></Card>
-          <Card><p className="eyebrow flex items-center gap-1.5"><Heart className="size-3 text-gold" /> Highlights</p><p className="mt-2 font-display text-3xl text-ink">24</p></Card>
-          <Card><p className="eyebrow flex items-center gap-1.5"><MessageCircle className="size-3 text-gold" /> Notes</p><p className="mt-2 font-display text-3xl text-ink">7</p></Card>
+          <Card><p className="eyebrow flex items-center gap-1.5"><Heart className="size-3 text-gold" /> Published</p><p className="mt-2 font-display text-3xl text-ink">{reviews.filter((r) => r.approved).length}</p></Card>
+          <Card><p className="eyebrow flex items-center gap-1.5"><MessageCircle className="size-3 text-gold" /> Files</p><p className="mt-2 font-display text-3xl text-ink">{deliveries.length}</p></Card>
         </div>
       </div>
 
