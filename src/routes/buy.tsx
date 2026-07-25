@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { Heart, MessageCircle, Users, BookOpen, Headphones, Tablet } from "lucide-react";
-import onePartWoman from "@/assets/one-part-woman.png.asset.json";
-import interpreterOfMaladies from "@/assets/interpreter-of-maladies.png.asset.json";
-import aLifeLessOrdinary from "@/assets/a-life-less-ordinary.png.asset.json";
+import { MessageCircle, Users, BookOpen, Headphones, Tablet } from "lucide-react";
+import onePartWoman from "@/assets/one-part-woman.jpg";
+import interpreterOfMaladies from "@/assets/interpreter-of-maladies.png";
+import aLifeLessOrdinary from "@/assets/a-life-less-ordinary.png";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Section, SectionEyebrow } from "@/components/site/Section";
 
@@ -26,7 +26,7 @@ const BOOKS = [
     title: "One Part Woman",
     author: "Perumal Murugan",
     translator: "Aniruddhan Vasudevan",
-    cover: onePartWoman.url,
+    cover: onePartWoman,
     price: 250,
     currency: "₹",
     icon: BookOpen,
@@ -39,7 +39,7 @@ const BOOKS = [
     id: "interpreter-of-maladies",
     title: "Interpreter of Maladies",
     author: "Jhumpa Lahiri",
-    cover: interpreterOfMaladies.url,
+    cover: interpreterOfMaladies,
     price: 350,
     currency: "₹",
     icon: Tablet,
@@ -53,7 +53,7 @@ const BOOKS = [
     title: "A Life Less Ordinary",
     author: "Baby Halder",
     translator: "Urvashi Butalia",
-    cover: aLifeLessOrdinary.url,
+    cover: aLifeLessOrdinary,
     price: 299,
     currency: "₹",
     icon: Headphones,
@@ -100,7 +100,7 @@ function BuyPage() {
 
                   <div className="mt-5 flex flex-wrap items-center gap-4 border-y border-border/60 py-3 text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5"><Users className="size-3.5 text-gold" /> {nf(b.stats.buyers)} readers</span>
-                    <span className="inline-flex items-center gap-1.5"><Heart className="size-3.5 text-gold" /> {nf(b.stats.likes)}</span>
+                    <span className="inline-flex items-center gap-1.5">{nf(b.stats.likes)} likes</span>
                     <span className="inline-flex items-center gap-1.5"><MessageCircle className="size-3.5 text-gold" /> {nf(b.stats.comments)}</span>
                   </div>
 

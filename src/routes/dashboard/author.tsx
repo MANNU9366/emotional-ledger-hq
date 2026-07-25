@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Loader2, Heart, MessageCircle, Users, TrendingUp, Star } from "lucide-react";
+import { Loader2, MessageCircle, Users, TrendingUp, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/DashboardShell";
-import bookCoverAsset from "@/assets/emotional-ledger-cover.png.asset.json";
-const bookCover = bookCoverAsset.url;
+import bookCover from "@/assets/emotional-ledger-cover.jpg";
 import author from "@/assets/author.jpg";
 
 export const Route = createFileRoute("/dashboard/author")({
@@ -73,7 +72,7 @@ function AuthorDashboard() {
               <p className="mt-2 text-sm text-muted-foreground">Ranked <span className="text-ink">#4 in Leadership</span> · read in <span className="text-ink">37 countries</span> this month.</p>
               <div className="mt-4 flex flex-wrap gap-4 text-[0.7rem] uppercase tracking-[0.16em] text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5"><Users className="size-3.5 text-gold" /> 16.2k readers</span>
-                <span className="inline-flex items-center gap-1.5"><Heart className="size-3.5 text-gold" /> 11.5k likes</span>
+                <span className="inline-flex items-center gap-1.5">11.5k likes</span>
                 <span className="inline-flex items-center gap-1.5"><MessageCircle className="size-3.5 text-gold" /> 780 comments</span>
               </div>
             </div>

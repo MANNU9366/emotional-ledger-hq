@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import bookCoverAsset from "@/assets/emotional-ledger-cover.png.asset.json";
-const bookCover = bookCoverAsset.url;
+import bookCover from "@/assets/emotional-ledger-cover.jpg";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Section, SectionEyebrow } from "@/components/site/Section";
 import { CHAPTERS, THEMES } from "@/lib/site-content";

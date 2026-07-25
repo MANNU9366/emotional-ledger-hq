@@ -1,14 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Star, BookOpen, Heart, MessageCircle, Bookmark, Download, FileText } from "lucide-react";
+import { Loader2, Plus, Trash2, Star, BookOpen, MessageCircle, Bookmark, Download, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardShell, Tabs, Card, EmptyState } from "@/components/site/DashboardShell";
 import { useAuth } from "@/lib/auth";
 import { inputCls, primaryBtn } from "@/components/site/AuthCard";
 import { Link } from "@tanstack/react-router";
-import bookCoverAsset from "@/assets/emotional-ledger-cover.png.asset.json";
-const bookCover = bookCoverAsset.url;
+import bookCover from "@/assets/emotional-ledger-cover.jpg";
 import hero from "@/assets/hero.jpg";
 
 export const Route = createFileRoute("/dashboard/buyer")({
@@ -110,7 +109,7 @@ function BuyerDashboard() {
         <div className="grid grid-cols-2 gap-4">
           <Card><p className="eyebrow flex items-center gap-1.5"><Bookmark className="size-3 text-gold" /> Orders</p><p className="mt-2 font-display text-3xl text-ink">{orders.length}</p></Card>
           <Card><p className="eyebrow flex items-center gap-1.5"><Star className="size-3 text-gold" /> Reviews</p><p className="mt-2 font-display text-3xl text-ink">{reviews.length}</p></Card>
-          <Card><p className="eyebrow flex items-center gap-1.5"><Heart className="size-3 text-gold" /> Published</p><p className="mt-2 font-display text-3xl text-ink">{reviews.filter((r) => r.approved).length}</p></Card>
+          <Card><p className="eyebrow">Published</p><p className="mt-2 font-display text-3xl text-ink">{reviews.filter((r) => r.approved).length}</p></Card>
           <Card><p className="eyebrow flex items-center gap-1.5"><MessageCircle className="size-3 text-gold" /> Files</p><p className="mt-2 font-display text-3xl text-ink">{deliveries.length}</p></Card>
         </div>
       </div>
