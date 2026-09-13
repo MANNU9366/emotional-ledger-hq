@@ -107,7 +107,7 @@ function BuyPage() {
                   <div className="mt-6 flex flex-col gap-2 sm:flex-row">
                     <Link
                       to="/checkout"
-                      search={{ edition: b.id }}
+                       search={{ edition: b.id as "hardcover" | "digital" | "audio" }}
                       className="inline-flex flex-1 items-center justify-center border border-ink bg-ink px-5 py-3 text-[0.72rem] uppercase tracking-[0.18em] text-paper transition-colors hover:bg-transparent hover:text-ink"
                     >
                       Buy · {b.currency}{nf(b.price)}

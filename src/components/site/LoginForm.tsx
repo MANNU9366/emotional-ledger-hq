@@ -35,15 +35,25 @@ export function LoginForm({ requiredRole: initialRole, redirectTo }: { requiredR
       return toast.error("Incorrect admin passcode.");
     }
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim().toLowerCase(),
-      password,
-    });
+    const credentials = { email: email.trim().toLowerCase(), password };
+    let result = await supabase.auth.signInWithPassword(credentials);
+    if (result.error?.message === "Failed to fetch") {
+      await new Promise((resolve) => setTimeout(resolve, 350));
+      result = await supabase.auth.signInWithPassword(credentials);
+    }
+    const { data, error } = result;
     if (error || !data.user) {
       setLoading(false);
-      return toast.error(error?.message ?? "Sign in failed.");
+      return toast.error(error?.message === "Failed to fetch"
+        ? "The sign-in service is temporarily unreachable. Please try again."
+        : error?.message ?? "Sign in failed.");
     }
-    const { data: rr } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+    const { data: rr, error: roleError } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+    if (roleError) {
+      await supabase.auth.signOut();
+      setLoading(false);
+      return toast.error("Your account could not be verified. Please try again.");
+    }
     const roles = ((rr ?? []) as { role: AppRole }[]).map((r) => r.role);
     setLoading(false);
     if (!roles.includes(requiredRole)) {
