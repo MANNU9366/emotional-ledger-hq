@@ -30,8 +30,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setRoles([]);
       return;
     }
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-    setRoles(((data ?? []) as { role: AppRole }[]).map((r) => r.role));
+    try {
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      setRoles(((data ?? []) as { role: AppRole }[]).map((r) => r.role));
+    } catch {
+      // Public pages should still render when a temporary network failure
+      // prevents the optional role lookup from completing.
+      setRoles([]);
+    }
   };
 
   const refresh = async () => {
@@ -46,9 +52,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!mounted) return;
       setSession(data.session);
       await loadRoles(data.session?.user.id);
-      setLoading(false);
+      if (mounted) setLoading(false);
+    }).catch(() => {
+      if (mounted) {
+        setSession(null);
+        setRoles([]);
+        setLoading(false);
+      }
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
+      if (!mounted || !["SIGNED_IN", "SIGNED_OUT", "USER_UPDATED"].includes(event)) return;
       setSession(s);
       void loadRoles(s?.user.id);
     });
